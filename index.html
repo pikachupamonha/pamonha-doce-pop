@@ -5,13 +5,14 @@
     <meta name="robots" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#E51975">
-    <title>Pamonha Doce — Corrida Maluca</title>
-    <meta name="description" content="Sistema gamificado de POPs - Pamonha Doce Headshop">
+    <title>Pamonha Doce — POP Iterativo & Corrida Maluca</title>
+    <meta name="description" content="Sistema iterativo e gamificado de POPs - Pamonha Doce Headshop">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@700;800;900&family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Bangers&family=Creepster&family=Special+Elite&family=Pacifico&family=Black+Ops+One&family=Rye&family=Chewy&family=Racing+Sans+One&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Paleta Pamonha Doce (padrão): rosa + amarelo, fundo claro */
+            /* Paleta Pamonha Doce (padrão): rosa + amarelo, fundo claro, tipografia Montserrat 100% legível */
             --bg: #FDF7FA;
             --bg2: #FFFFFF;
             --bg3: #FFF0F7;
@@ -32,18 +33,19 @@
             --cyan: #06b6d4;
             --emerald: #FFC000;
             --lime: #FFC000;        /* amarelo Pamonha Doce */
-            --radius: 18px;
-            --radius-sm: 12px;
+            --radius: 20px;
+            --radius-sm: 14px;
             --shadow: 0 10px 25px -5px rgba(229,25,117,0.10), 0 4px 10px -2px rgba(31,18,43,0.05);
-            --font-display: 'Fredoka', 'Outfit', sans-serif;
+            --font-display: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* === ROLE SELECT SCREEN === */
@@ -669,50 +671,453 @@
         /* ===== RESPONSIVO: celular, tablet e PC ===== */
         html, body { max-width: 100%; overflow-x: hidden; }
 
-        /* tablet em pé e janelas médias: conteúdo centralizado e cabeçalho que rola junto */
+        /* ===== LAYOUT DESAFOGADO: BARRA SUPERIOR COMPACTA + PISTA PANORÂMICA NO TOPO + RAIL FINO ===== */
+        .quest::before, .quest::after { content: none !important; display: none !important; }
+        .quest, .st, .panel, .kpi { clip-path: none !important; border-image: none !important; }
+        .section-title { text-transform: uppercase; letter-spacing: 1.2px; font-family: var(--font-display); font-weight: 800; font-size: 0.85rem; }
+
+        .header {
+            position: static;
+            background: var(--bg2);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 16px 14px;
+            overflow: visible;
+        }
+        .header-shell {
+            max-width: 1080px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .topbar-strip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .poster {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+            min-width: 0;
+        }
+        .poster-art {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            border: 2px solid var(--green);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+            flex-shrink: 0;
+        }
+        .poster-art .art-fb { font-size: 1.6rem; }
+        .poster-name { font-size: 1rem; font-weight: 800; letter-spacing: -0.2px; line-height: 1.15; text-transform: none; }
+        .poster-car { font-size: 0.72rem; color: var(--text2); font-weight: 600; margin: 2px 0 0; }
+        .plate { font-size: 0.68rem; padding: 0 5px; letter-spacing: 1px; vertical-align: middle; }
+        .poster-rank { font-size: 0.68rem; font-weight: 700; margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: var(--bg3); border: 1px solid var(--border); }
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin: 0;
+            justify-content: flex-end;
+        }
+        .legacy-metrics { display: none; }
+
+        /* ===== HUD PANORÂMICO DA CORRIDA MALUCA (TOPO) ===== */
+        .race { margin: 0; }
+        .race.hidden-hud { display: none; }
+        .race-hud-box {
+            border-radius: 22px;
+            padding: 14px 16px 12px;
+            border: 2px solid color-mix(in srgb, var(--green) 45%, var(--border));
+            background: linear-gradient(180deg, color-mix(in srgb, var(--bg2) 92%, #000) 0%, color-mix(in srgb, var(--bg) 96%, #000) 100%);
+            box-shadow: 0 14px 32px rgba(0,0,0,0.22);
+            position: relative;
+            overflow: hidden;
+        }
+        .race-hud-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .race-hud-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+        .race-hud-title .rht-badge {
+            width: 38px; height: 38px;
+            border-radius: 12px;
+            background: var(--green);
+            color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem; font-weight: 900; flex-shrink: 0;
+            box-shadow: 0 4px 12px color-mix(in srgb, var(--green) 45%, transparent);
+        }
+        .race-hud-title h4 { font-size: 0.92rem; font-weight: 800; line-height: 1.2; color: var(--text); }
+        .race-hud-title p { font-size: 0.7rem; font-weight: 600; color: var(--text2); margin-top: 1px; }
+        .race-pills { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .rpill {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 5px 11px; border-radius: 999px;
+            font-size: 0.7rem; font-weight: 800;
+            border: 1px solid var(--border);
+            background: var(--bg3); color: var(--text);
+            white-space: nowrap;
+        }
+        .rpill.btn-pill { cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .rpill.btn-pill:hover { transform: translateY(-1px); border-color: var(--green); }
+        .rpill.btn-pill.on { background: var(--green); border-color: var(--green); color: #fff; }
+        .rpill.gold { background: #FFC000; border-color: #F59E0B; color: #1F122B; }
+        .rpill.turbo-on { background: linear-gradient(135deg, #10B981, #059669); border-color: #34D399; color: #fff; box-shadow: 0 0 14px rgba(16,185,129,0.4); }
+        .rpill.turbo-ask { background: linear-gradient(135deg, #F59E0B, #D97706); border-color: #FCD34D; color: #111; cursor: pointer; animation: pulse 1s ease-in-out infinite alternate; }
+        .rpill.repesc { background: rgba(245,158,11,0.18); border-color: #F59E0B; color: #FBBF24; cursor: pointer; }
+        body.light .rpill.repesc { background: #FEF3C7; color: #B45309; }
+
+        /* Arena asfáltica panorâmica */
+        .speedway-arena {
+            position: relative;
+            height: 108px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(180deg, color-mix(in srgb, var(--bg3) 80%, #111) 0%, #1E1B26 44%, #15131B 100%);
+            border: 1.5px solid rgba(255,255,255,0.14);
+        }
+        .speedway-horizon {
+            position: absolute; left: 0; right: 0; top: 4px; height: 42px;
+            background: var(--scene, none) repeat-x left bottom / auto 100%;
+            opacity: 0.55; pointer-events: none;
+        }
+        .speedway-top-labels {
+            position: absolute; top: 6px; left: 12px; right: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.64rem; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase;
+            color: rgba(255,255,255,0.82); z-index: 3; pointer-events: none;
+        }
+        .speedway-asphalt {
+            position: absolute; left: 0; right: 0; bottom: 0; height: 62px;
+            background: linear-gradient(180deg, #272433 0%, #191722 100%);
+            border-top: 2px solid rgba(255,255,255,0.18);
+        }
+        .speedway-asphalt::after {
+            content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 2px;
+            background: repeating-linear-gradient(90deg, rgba(255,255,255,0.32) 0 18px, transparent 18px 36px);
+            transform: translateY(-50%);
+        }
+        .speedway-fill {
+            position: absolute; left: 0; bottom: 0; height: 62px;
+            background: linear-gradient(90deg, rgba(229,25,117,0.12), color-mix(in srgb, var(--green) 42%, transparent));
+            border-right: 3px solid #FFC000;
+            transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            pointer-events: none;
+        }
+        .speedway-finish {
+            position: absolute; right: 0; bottom: 0; width: 14px; height: 62px;
+            background: repeating-conic-gradient(#fff 0% 25%, #111 0% 50%) 50% / 10px 10px;
+            opacity: 0.88; z-index: 2;
+        }
+        .racer-pin {
+            position: absolute;
+            transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center;
+            transition: left 0.55s cubic-bezier(0.34, 1.4, 0.64, 1);
+            z-index: 4;
+            pointer-events: none;
+        }
+        .racer-pin.hero { z-index: 8; bottom: 4px; }
+        .racer-pin.peer { z-index: 5; opacity: 0.92; }
+        .racer-pin .rp-tag {
+            font-size: 0.6rem; font-weight: 800; padding: 2px 7px; border-radius: 999px;
+            background: rgba(15, 23, 42, 0.88); color: #fff; border: 1px solid rgba(255,255,255,0.28);
+            white-space: nowrap; margin-bottom: 1px; line-height: 1.2;
+        }
+        .racer-pin.hero .rp-tag {
+            background: var(--green); border-color: #fff; color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.45);
+        }
+        .racer-pin .rp-body {
+            display: flex; align-items: center; gap: 2px; position: relative;
+        }
+        .racer-pin .rp-flame {
+            font-size: 0.95rem; filter: drop-shadow(0 0 6px #fbbf24);
+            animation: flamePulse 0.35s ease-in-out infinite alternate;
+        }
+        @keyframes flamePulse { from { transform: scale(0.88) translateX(2px); } to { transform: scale(1.14) translateX(-2px); } }
+        .racer-pin .rr-img { height: 34px; width: auto; max-width: 66px; object-fit: contain; filter: drop-shadow(0 3px 5px rgba(0,0,0,0.65)); }
+        .racer-pin.peer .rr-img { height: 24px; max-width: 48px; }
+        .racer-pin .rp-emo { font-size: 1.6rem; line-height: 1; filter: drop-shadow(0 3px 4px rgba(0,0,0,0.6)); }
+        .racer-pin.peer .rp-emo { font-size: 1.2rem; }
+
+        /* Faixa dedicada de Checkpoints abaixo do asfalto (zero colisão com os carros) */
+        .speedway-cps {
+            display: flex; align-items: center; gap: 6px; overflow-x: auto;
+            padding: 9px 2px 2px; scrollbar-width: thin;
+        }
+        .cp-pill {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 5px 10px; border-radius: 10px;
+            font-size: 0.68rem; font-weight: 800; white-space: nowrap;
+            border: 1.5px solid var(--border); background: var(--card); color: var(--text2);
+            cursor: pointer; transition: all 0.2s; font-family: inherit; flex-shrink: 0;
+        }
+        .cp-pill.done { background: rgba(22,163,74,0.16); border-color: #16A34A; color: #4ADE80; }
+        body.light .cp-pill.done { background: #DCFCE7; color: #15803D; }
+        .cp-pill.now { border-color: #FFC000; background: color-mix(in srgb, var(--green) 22%, var(--card)); color: var(--text); box-shadow: 0 0 0 2px rgba(255,192,0,0.28); }
+        .cp-pill.rep { border-color: #F59E0B; background: rgba(245,158,11,0.16); color: #FBBF24; }
+        body.light .cp-pill.rep { background: #FEF3C7; color: #B45309; }
+        .cp-pill.lock { opacity: 0.48; cursor: not-allowed; }
+
+        /* Barra Duolingo Limpa (Modo Tradicional) */
+        .trad-hud-box {
+            background: #FFFFFF; border: 2px solid var(--border); border-radius: 20px;
+            padding: 14px 18px; box-shadow: 0 8px 22px rgba(229,25,117,0.07);
+        }
+        .trad-segs { display: flex; gap: 5px; margin-top: 10px; }
+        .trad-segs i {
+            flex: 1; height: 10px; border-radius: 999px; background: #F2DCE7;
+            transition: all 0.35s;
+        }
+        .trad-segs i.done { background: #16A34A; }
+        .trad-segs i.now { background: linear-gradient(90deg, #E51975, #FFC000); transform: scaleY(1.18); }
+        .trad-segs i.rep { background: #F59E0B; }
+
+        /* ===== CARTÃO ITERATIVO DO POP (TINDER / DUOLINGO / OLHAR DE GESTOR) ===== */
+        .rotina-toolbar {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            flex-wrap: wrap; margin-bottom: 14px;
+        }
+        .rotina-toolbar .ciclos { margin-bottom: 0; flex: 1; min-width: 260px; }
+        .view-switch { display: flex; gap: 6px; }
+        .view-switch button {
+            padding: 9px 14px; border-radius: 12px; font-size: 0.75rem; font-weight: 800;
+            border: 2px solid var(--border); background: var(--card); color: var(--text2);
+            cursor: pointer; font-family: inherit; transition: all 0.2s;
+        }
+        .view-switch button.on { border-color: var(--green); background: var(--green-dark); color: var(--green); }
+
+        .iter-stage {
+            max-width: 780px; margin: 4px auto 18px; position: relative;
+        }
+        .iter-card {
+            background: var(--card);
+            border: 2px solid color-mix(in srgb, var(--green) 35%, var(--border));
+            border-radius: 26px;
+            padding: 22px 24px;
+            box-shadow: 0 18px 40px -10px rgba(0,0,0,0.22);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease;
+            touch-action: pan-y;
+        }
+        body.light .iter-card {
+            box-shadow: 0 16px 36px -8px rgba(229,25,117,0.12), 0 4px 12px rgba(31,18,43,0.05);
+        }
+        .iter-stamp {
+            position: absolute; top: 18px; padding: 6px 14px; border-radius: 12px;
+            border: 3.5px solid; font-weight: 900; font-size: 0.85rem; letter-spacing: 1px;
+            z-index: 20; pointer-events: none; opacity: 0; transition: opacity 0.15s;
+            background: var(--card);
+        }
+        .iter-stamp.ok { right: 20px; border-color: #16A34A; color: #16A34A; transform: rotate(7deg); }
+        .iter-stamp.fail { left: 20px; border-color: #F59E0B; color: #D97706; transform: rotate(-7deg); }
+        .iter-stamp.show { opacity: 1; }
+
+        .iter-meta {
+            display: flex; align-items: center; justify-content: space-between; gap: 8px;
+            flex-wrap: wrap; margin-bottom: 12px;
+        }
+        .iter-pop-tag {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 5px 12px; border-radius: 999px;
+            background: var(--green-dark); color: var(--green);
+            border: 1px solid color-mix(in srgb, var(--green) 35%, transparent);
+            font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px;
+        }
+        body.corrida-dark .iter-pop-tag { color: #fff; }
+        .iter-step-dots {
+            display: flex; gap: 5px; margin-bottom: 16px;
+        }
+        .iter-step-dots span {
+            flex: 1; height: 7px; border-radius: 999px; background: var(--border); opacity: 0.55;
+            transition: all 0.25s;
+        }
+        .iter-step-dots span.done { background: #16A34A; opacity: 1; }
+        .iter-step-dots span.now { background: var(--green); opacity: 1; transform: scaleY(1.3); }
+        .iter-step-dots span.rep { background: #F59E0B; opacity: 1; }
+
+        .iter-cat {
+            font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.4px;
+            color: var(--green); margin-bottom: 6px;
+        }
+        .iter-title {
+            font-size: 1.35rem; font-weight: 800; line-height: 1.28; color: var(--text);
+            margin-bottom: 16px; letter-spacing: -0.3px;
+        }
+        .iter-repesc-banner {
+            background: rgba(245,158,11,0.14); border: 1.5px solid #F59E0B; border-radius: 14px;
+            padding: 10px 14px; margin-bottom: 14px; font-size: 0.78rem; line-height: 1.45;
+            color: var(--text); font-weight: 600;
+        }
+        .iter-repesc-banner b { color: #F59E0B; }
+        body.light .iter-repesc-banner { background: #FFFBEB; }
+        body.light .iter-repesc-banner b { color: #B45309; }
+
+        .iter-guides {
+            display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 16px;
+        }
+        @media (min-width: 720px) {
+            .iter-guides { grid-template-columns: 1.05fr 0.95fr; }
+        }
+        .iguide {
+            background: var(--bg); border: 1px solid var(--border); border-radius: 16px;
+            padding: 14px 16px; border-left: 4px solid var(--green);
+        }
+        .iguide.mgr { border-left-color: #FFC000; }
+        .iguide-hd {
+            font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.9px;
+            color: var(--green); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+        }
+        .iguide.mgr .iguide-hd { color: var(--gold); }
+        body:not(.light) .iguide.mgr .iguide-hd { color: #FBBF24; }
+        .iguide p {
+            font-size: 0.83rem; line-height: 1.55; color: var(--text); font-weight: 500;
+        }
+        .iguide-warn {
+            margin-top: 9px; padding-top: 8px; border-top: 1px dashed var(--border);
+            font-size: 0.74rem; line-height: 1.45; color: var(--text2); font-weight: 600;
+        }
+        .iguide-warn b { color: var(--red); }
+        body:not(.light) .iguide-warn b { color: #FCA5A5; }
+
+        .iter-ctx-bar {
+            display: flex; align-items: center; justify-content: space-between; gap: 8px;
+            flex-wrap: wrap; padding: 10px 14px; border-radius: 14px;
+            background: var(--bg3); border: 1px solid var(--border);
+            margin-bottom: 16px; font-size: 0.76rem; font-weight: 700;
+        }
+
+        .iter-actions {
+            display: grid; grid-template-columns: 1fr 1.25fr; gap: 12px;
+        }
+        @media (max-width: 520px) {
+            .iter-card { padding: 16px; border-radius: 20px; }
+            .iter-title { font-size: 1.12rem; }
+            .iter-actions { grid-template-columns: 1fr; }
+        }
+        .act-btn {
+            padding: 15px 16px; border-radius: 16px; font-family: inherit;
+            font-size: 0.88rem; font-weight: 800; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: all 0.2s; border: 2px solid transparent;
+        }
+        .act-btn:active { transform: scale(0.97); }
+        .act-btn.fail {
+            background: rgba(220, 38, 38, 0.08); border-color: rgba(220, 38, 38, 0.42); color: #EF4444;
+        }
+        body.light .act-btn.fail { background: #FFF1F2; border-color: #FDA4AF; color: #BE123C; }
+        .act-btn.ok {
+            background: linear-gradient(135deg, #16A34A, #059669); color: #FFFFFF;
+            box-shadow: 0 8px 20px -4px rgba(22, 163, 74, 0.48);
+        }
+        .kbd-hint {
+            font-size: 0.68rem; font-weight: 900; padding: 2px 7px; border-radius: 6px;
+            background: rgba(0,0,0,0.18); border: 1px solid rgba(255,255,255,0.22);
+        }
+        body.light .act-btn.fail .kbd-hint { background: #FFE4E6; border-color: #FDA4AF; color: #9F1239; }
+
+        .imp-drawer {
+            margin-top: 4px; padding: 16px; border-radius: 18px;
+            border: 2px solid #F59E0B; background: rgba(245, 158, 11, 0.09);
+        }
+        body.light .imp-drawer { background: #FFFBEB; }
+        .imp-reasons {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(195px, 1fr)); gap: 8px; margin: 10px 0;
+        }
+        .imp-rbtn {
+            padding: 10px 12px; border-radius: 12px; border: 1.5px solid var(--border);
+            background: var(--card); color: var(--text); font-family: inherit;
+            font-size: 0.76rem; font-weight: 700; text-align: left; cursor: pointer;
+            transition: all 0.15s;
+        }
+        .imp-rbtn:hover, .imp-rbtn.sel { border-color: #F59E0B; background: rgba(245,158,11,0.16); }
+
+        /* Cartão de Celebração entre POPs */
+        .celeb-card {
+            max-width: 680px; margin: 8px auto 20px; text-align: center;
+            background: var(--card); border: 2.5px solid #FFC000; border-radius: 26px;
+            padding: 28px 24px; box-shadow: 0 18px 40px rgba(0,0,0,0.22);
+        }
+
+        /* ===== PÓDIO & COPA MENSAL DA CORRIDA MALUCA ===== */
+        .podium-grid {
+            display: grid; grid-template-columns: 1fr; gap: 12px; margin: 16px 0; align-items: end;
+        }
+        @media (min-width: 760px) {
+            .podium-grid { grid-template-columns: 1fr 1.14fr 1fr; }
+            .pod-1 { order: 2; transform: translateY(-6px); }
+            .pod-2 { order: 1; }
+            .pod-3 { order: 3; }
+        }
+        .pod-card {
+            background: var(--card); border: 2px solid var(--border); border-radius: 22px;
+            padding: 18px 16px; text-align: center; position: relative; overflow: hidden;
+        }
+        .pod-card.pod-1 {
+            border-color: #FFC000;
+            box-shadow: 0 14px 34px rgba(245, 158, 11, 0.22);
+            background: linear-gradient(180deg, color-mix(in srgb, #FFC000 12%, var(--card)) 0%, var(--card) 65%);
+        }
+        .pod-card.pod-2 { border-color: #94A3B8; }
+        .pod-card.pod-3 { border-color: #D97706; }
+        .pod-medal { font-size: 2.1rem; line-height: 1; margin-bottom: 6px; }
+        .pod-pts { font-size: 1.55rem; font-weight: 900; color: var(--green); margin: 6px 0 2px; }
+        .pod-card.pod-1 .pod-pts { color: #F59E0B; }
+        body.light .pod-card.pod-1 .pod-pts { color: #B45309; }
+        .pod-prize {
+            margin-top: 10px; padding: 8px 10px; border-radius: 12px;
+            background: var(--bg3); border: 1px dashed var(--gold2);
+            font-size: 0.72rem; font-weight: 700; color: var(--text); line-height: 1.35;
+        }
+
+        /* Responsivo tablet e PC sem sidebar gigante */
+        @media (max-width: 899px) {
+            #bb-out { display: none; }
+        }
         @media (min-width: 600px) {
-            .header { position: static; }
-            .header > * { width: 100%; max-width: 760px; margin-left: auto; margin-right: auto; }
-            .main { max-width: 760px; margin: 0 auto; }
+            .main { max-width: 960px; margin: 0 auto; }
             .pilot-grid { grid-template-columns: repeat(3, 1fr); }
             .pilot-grid, .pilot-info, .role-grid, .shift-grid, .start-btn, .role-section-title, .user-bar { max-width: 760px; }
             .role-screen { padding-left: 32px; padding-right: 32px; }
         }
-
-        /* PC e tablet deitado: barra lateral fixa (piloto, corrida, placar) + menu em coluna + tarefas em colunas */
         @media (min-width: 900px) {
-            body.in-game { padding-left: 440px; padding-bottom: 0; }
-            body.in-game .bottom-bar { top: 0; bottom: 0; left: 0; right: auto; width: 84px; flex-direction: column; justify-content: flex-start; gap: 6px; padding: 14px 6px; border-top: 0; border-right: 1px solid var(--border); overflow-y: auto; }
-            body.in-game .bb-btn { flex: 0 0 auto; max-width: none; width: 100%; padding: 12px 0; font-size: 0.62rem; }
-            body.in-game .bb-btn .bb-icon { font-size: 1.4rem; margin-bottom: 4px; }
-            body.in-game .header { position: fixed; top: 0; left: 84px; width: 356px; height: 100vh; overflow-y: auto; border-bottom: 0; border-right: 1px solid var(--border); padding: 20px 16px 70px; background: var(--scene, none) repeat-x left bottom / auto 56px, linear-gradient(180deg, var(--bg2), var(--bg)); z-index: 80; }
-            body.in-game .header > * { max-width: none; margin-left: 0; margin-right: 0; }
-            body.in-game .poster { flex-direction: column; text-align: center; margin-bottom: 14px; }
-            body.in-game .poster-art { width: 150px; height: 150px; }
-            body.in-game .poster-art .art-fb { font-size: 4.5rem; }
-            body.in-game .poster-name { font-size: 1.6rem; }
-            body.in-game .header-top { justify-content: space-between; }
-            body.in-game .main { max-width: 1200px; margin: 0 auto; padding: 28px 32px 48px; }
+            body.in-game { padding-left: 92px; padding-bottom: 0; }
+            body.in-game .bottom-bar {
+                top: 0; bottom: 0; left: 0; right: auto; width: 92px;
+                flex-direction: column; justify-content: flex-start; gap: 6px;
+                padding: 14px 8px; border-top: 0; border-right: 1px solid var(--border);
+                overflow-y: auto;
+            }
+            body.in-game .bb-btn { flex: 0 0 auto; max-width: none; width: 100%; padding: 10px 4px; font-size: 0.62rem; font-weight: 700; }
+            body.in-game .bb-btn .bb-icon { font-size: 1.35rem; margin-bottom: 3px; }
+            body.in-game .header { padding: 14px 28px 16px; }
+            body.in-game .main { max-width: 1120px; margin: 0 auto; padding: 20px 28px 48px; }
             body.in-game .quests { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 14px; align-items: start; }
-            body.in-game .section-title { font-size: 1.05rem; margin-top: 26px; }
             body.in-game .quest.expanded { grid-column: 1 / -1; }
-            body.in-game .grid2 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-            body.in-game .pgrid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-            body.in-game .toast { left: calc(50% + 220px); }
+            body.in-game .grid2 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+            body.in-game .pgrid { grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
+            body.in-game .toast { left: calc(50% + 46px); }
             .pilot-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
             .pilot-grid, .pilot-info, .role-grid, .shift-grid, .start-btn, .role-section-title, .user-bar { max-width: 940px; }
             .role-grid, .shift-grid { gap: 14px; }
             .pc-art { width: 88px; height: 88px; }
-        }
-        @media (min-width: 1500px) {
-            body.in-game .quests { grid-template-columns: repeat(auto-fill, minmax(460px, 1fr)); }
-        }
-        /* telas baixas (tablet deitado): barra lateral mais compacta */
-        @media (min-width: 900px) and (max-height: 760px) {
-            body.in-game .poster-art { width: 96px; height: 96px; }
-            body.in-game .poster-art .art-fb { font-size: 3rem; }
-            body.in-game .poster-name { font-size: 1.25rem; }
-            body.in-game .bb-btn { padding: 8px 0; }
         }
         /* ===== ciclos (diária / semanal / mensal), trilha de fases, sair ===== */
         .hbtn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); border-radius: var(--btn-r, 8px); padding: 6px 10px; font-size: 0.7rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
@@ -816,10 +1221,10 @@
         .btn, .hbtn, .datenav button, .ciclos button, .bb-btn { min-height: 40px; }
         input, select, textarea { font-size: 16px; }   /* evita zoom automático no iPhone */
         @media (max-width: 420px) {
-            .header { padding: 12px 14px 56px; }
-            .main { padding-left: 14px; padding-right: 14px; }
-            .poster-name { font-size: 1.15rem; }
-            .hbtn { padding: 6px 8px; font-size: 0.66rem; }
+            .header { padding: 10px 12px 12px; }
+            .main { padding-left: 12px; padding-right: 12px; }
+            .poster-name { font-size: 0.96rem; }
+            .hbtn { padding: 6px 8px; font-size: 0.65rem; }
         }
         @media (max-height: 520px) and (orientation: landscape) and (max-width: 899px) {
             .header { position: static; padding-bottom: 12px; }
@@ -927,42 +1332,42 @@
 <!-- ============ GAME SCREEN ============ -->
 <div class="game-screen" id="game-screen">
     <header class="header">
-        <div class="poster" id="poster"></div>
-        <div class="header-top">
-            <div class="h-logo" id="h-logo">🌿 PAMONHA DOCE</div>
-            <div class="h-role-badge" onclick="goBack()">
-                <span id="h-rank-icon">🌱</span>
-                <span class="rank-name" id="h-rank-name">Semente</span>
+        <div class="header-shell">
+            <div class="topbar-strip">
+                <div class="poster" id="poster"></div>
+                <div class="header-top">
+                    <div class="h-logo" id="h-logo">🌿 PAMONHA DOCE</div>
+                    <div class="h-role-badge" onclick="showTab('rank')" title="Ver trilha de graduação">
+                        <span id="h-rank-icon">🌱</span>
+                        <span class="rank-name" id="h-rank-name">Semente</span>
+                    </div>
+                    <div class="h-date" id="h-date"></div>
+                    <button class="hbtn" id="btn-modo" onclick="alternarModo()" title="Alternar entre Corrida Maluca e Modo Tradicional">🏁 Corrida Maluca</button>
+                    <button class="hbtn" onclick="goBack()" title="Trocar piloto, unidade ou turno">↩ Piloto / turno</button>
+                    <button class="hbtn out" onclick="logout()" title="Trocar colaborador">🚪 Sair</button>
+                </div>
             </div>
-            <div class="h-date" id="h-date"></div>
-            <button class="hbtn" id="btn-modo" onclick="alternarModo()" title="Alternar entre as versões">🏁 Corrida Maluca</button>
-            <button class="hbtn" onclick="goBack()" title="Trocar piloto ou turno">↩ Piloto / turno</button>
-            <button class="hbtn out" onclick="logout()" title="Sair do perfil">🚪 Sair</button>
+            <!-- Pista Panorâmica Destacada no Topo -->
+            <div class="race" id="race"></div>
+            <!-- Métricas compactas preservadas para compatibilidade interna -->
+            <div class="legacy-metrics">
+                <div id="st-pops">0</div><div id="st-rank">—</div><div id="st-streak">0</div><div id="st-today">0/0</div>
+                <div id="rank-bar"></div><span id="rank-cur-lbl"></span><span id="rank-next-lbl"></span>
+                <div id="day-line"></div>
+            </div>
         </div>
-        <div class="race" id="race"></div>
-        <div class="stats-row">
-            <div class="st pops"><div class="st-val" id="st-pops">0</div><div class="st-lbl">POPs</div></div>
-            <div class="st rank"><div class="st-val" id="st-rank">—</div><div class="st-lbl">Graduação</div></div>
-            <div class="st streak"><div class="st-val" id="st-streak">0</div><div class="st-lbl">🔥 Streak</div></div>
-            <div class="st progress"><div class="st-val" id="st-today">0/0</div><div class="st-lbl">Hoje</div></div>
-        </div>
-        <div class="rank-bar-bg"><div class="rank-bar-fill" id="rank-bar" style="width:0%"></div></div>
-        <div class="rank-bar-labels">
-            <span id="rank-cur-lbl">0 POPs</span>
-            <span id="rank-next-lbl">Próx: 15 POPs</span>
-        </div>
-        <div class="day-line" id="day-line"></div>
     </header>
 
     <main class="main" id="main-content"></main>
 
     <div class="bottom-bar">
         <div class="bb-btn active" id="bb-quests" onclick="showTab('quests')"><span class="bb-icon">📋</span>Rotina</div>
+        <div class="bb-btn" id="bb-copa" onclick="showTab('copa')"><span class="bb-icon">🏁</span>Ranking</div>
         <div class="bb-btn" id="bb-vendas" onclick="showTab('vendas')"><span class="bb-icon">💰</span>Vendas</div>
         <div class="bb-btn" id="bb-team" onclick="showTab('team')"><span class="bb-icon">📊</span>Equipe</div>
         <div class="bb-btn" id="bb-ach" onclick="showTab('ach')"><span class="bb-icon">🏆</span>Conquistas</div>
-        <div class="bb-btn" id="bb-rank" onclick="showTab('rank')"><span class="bb-icon">🌿</span>Graduação</div>
-        <div class="bb-btn" id="bb-proc" onclick="showTab('proc')"><span class="bb-icon">📖</span>Processos</div>
+        <div class="bb-btn" id="bb-rank" onclick="showTab('rank')"><span class="bb-icon">🌿</span>Carreira</div>
+        <div class="bb-btn" id="bb-proc" onclick="showTab('proc')"><span class="bb-icon">📖</span>Manuais</div>
         <div class="bb-btn" id="bb-mgr" onclick="showTab('mgr')"><span class="bb-icon">🔒</span>Gestor</div>
         <div class="bb-btn out" id="bb-out" onclick="logout()"><span class="bb-icon">🚪</span>Sair</div>
     </div>
@@ -1146,20 +1551,27 @@ function renderPoster() {
     const c = charAtual();
     if (!el) return;
     const rk = getCurrentRank();
+    const u = loadUsers()[currentUser];
+    const turno = (currentShifts().find(x => x.id === selectedShift) || {}).name || '';
+    const nomeColab = u ? esc(u.nome) : 'Equipe';
     if (!c) {
-        const u = loadUsers()[currentUser];
-        const turno = (currentShifts().find(x => x.id === selectedShift) || {}).name || '';
         el.className = 'poster me';
-        el.innerHTML = `<div class="poster-art">${avatarHTML(58)}</div>
-            <div class="poster-txt"><div class="poster-name">${u ? u.nome : 'Equipe'}</div><div class="poster-car">${unitInfo().icon} ${unitInfo().name}${turno ? ' · ' + turno : ''}</div><span class="poster-rank">${rk.icon} ${rk.name}</span></div>`;
+        el.innerHTML = `<div class="poster-art">${avatarHTML(44)}</div>
+            <div class="poster-txt">
+                <div class="poster-name">${nomeColab} <span class="poster-rank">${rk.icon} ${rk.name}</span></div>
+                <div class="poster-car">${unitInfo().icon} ${unitInfo().name}${turno ? ' · Turno ' + turno : ''}</div>
+            </div>`;
         return;
     }
     el.className = 'poster';
     el.innerHTML = `<div class="poster-art">${artHTML(c, 'ret', 'poster-img')}</div>
-        <div class="poster-txt"><div class="poster-name">${c.nome}</div><div class="poster-car">${c.carro}</div><span class="plate">${c.num}</span><span class="poster-rank">${rk.icon} ${rk.name}</span></div>`;
+        <div class="poster-txt">
+            <div class="poster-name">${nomeColab} · <span style="color:var(--green)">${c.curto}</span> <span class="plate">#${c.num}</span></div>
+            <div class="poster-car">${c.veiculo} ${c.carro} · ${unitInfo().icon} ${unitInfo().name}${turno ? ' (' + turno + ')' : ''} <span class="poster-rank">${rk.icon} ${rk.name}</span></div>
+        </div>`;
 }
 
-function charAtual() { return (state && state.modo === 'corrida') ? (CHARS.find(c => c.id === state.char) || null) : null; }   // só existe piloto na versão Corrida Maluca
+function charAtual() { return (state && state.modo === 'corrida') ? (CHARS.find(c => c.id === state.char) || null) : null; }
 function frasePiloto(chave, padrao) {
     const c = charAtual();
     if (!c) return padrao;
@@ -1167,7 +1579,7 @@ function frasePiloto(chave, padrao) {
     return Array.isArray(v) ? v[Math.floor(Math.random() * v.length)] : (v || padrao);
 }
 
-// aplica o tema do piloto nas variáveis de cor/fonte (null = visual original)
+// aplica o tema do piloto mantendo SEMPRE a fonte Montserrat legível e cartões limpos
 function applyTheme(id) {
     const root = document.documentElement;
     const c = CHARS.find(x => x.id === id);
@@ -1180,9 +1592,10 @@ function applyTheme(id) {
             const t = TEMAS[c.id];
             Object.entries(map).forEach(([k, f]) => root.style.setProperty(k, c.cores[f]));
             const v = {
-                '--font-display': c.fonte, '--bg-img': svgUrl(t.bg), '--scene': svgUrl(t.scene), '--card-r': t.cardR, '--card-bw': t.cardBw, '--card-bs': t.cardBs,
-                '--clip': t.clip || 'none', '--bimg': t.bimg || 'none', '--card-tex': t.tex || 'none', '--card-sh': t.sh || 'none', '--panel-r': t.panelR,
-                '--ttl-tt': t.ttl, '--ttl-ls': t.ls, '--check-r': t.checkR, '--deco': `'${t.deco}'`, '--deco2': `'${t.deco2}'`, '--road': t.road, '--btn-r': t.btnR, '--art-r': t.artR
+                '--font-display': "'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                '--bg-img': svgUrl(t.bg), '--scene': svgUrl(t.scene), '--card-r': '18px', '--card-bw': '1.5px', '--card-bs': 'solid',
+                '--clip': 'none', '--bimg': 'none', '--card-tex': 'none', '--card-sh': t.sh || 'none', '--panel-r': '16px',
+                '--ttl-tt': 'uppercase', '--ttl-ls': '1px', '--check-r': '50%', '--deco': "''", '--deco2': "''", '--road': t.road, '--btn-r': '12px', '--art-r': '14px'
             };
             Object.entries(v).forEach(([k, val]) => root.style.setProperty(k, val));
         }
@@ -1194,9 +1607,9 @@ function updateBranding() {
     const hl = document.getElementById('h-logo');
     if (hl) hl.textContent = c ? `${c.piloto} PAMONHA DOCE` : '🌽 PAMONHA DOCE';
     const rs = document.getElementById('role-sub');
-    if (rs) rs.textContent = (state && state.modo === 'corrida') ? (c ? `corrida maluca · ${c.curto}` : 'corrida maluca · escolha seu piloto') : 'headshop · rotinas e metas';
+    if (rs) rs.textContent = (state && state.modo === 'corrida') ? (c ? `corrida maluca · ${c.curto}` : 'corrida maluca · escolha seu piloto') : 'headshop · pop iterativo & metas';
     const bm = document.getElementById('btn-modo');
-    if (bm) bm.textContent = (state && state.modo === 'corrida') ? '🌽 Versão tradicional' : '🏁 Corrida Maluca';
+    if (bm) bm.textContent = (state && state.modo === 'corrida') ? '🌽 Modo Tradicional' : '🏁 Corrida Maluca';
 }
 
 // aplica a versão escolhida: tradicional = cores Pamonha Doce; corrida = tema do piloto
@@ -1206,6 +1619,7 @@ function applyModo() {
     applyTheme(id);
     if (document.body && document.body.classList) {
         document.body.classList.toggle('light', !id);
+        document.body.classList.toggle('corrida-dark', !!id);
         document.body.classList.toggle('modo-trad', !corrida);
     }
 }
@@ -1429,35 +1843,66 @@ const ACHIEVEMENTS = [
 ];
 
 // ========== STATE ==========
+const BONUS_DIA = 25;         // bônus ao concluir 100% do turno
+const TURBO_15_PTS = 25;      // bônus ao chegar >= 15 min antes do início do turno
+const TURBO_CONF_PTS = 20;    // bônus ao confirmar chegada antecipada antes da abertura
+const BONUS_PRAZO_PTS = 5;    // bônus extra por POP com horário concluído dentro do prazo
+const TOLERANCIA_MIN = 10;    // tolerância de prazo em minutos
+
+const PREMIOS_PADRAO = {
+    p1: '🏆 R$ 150 em Bônus / Vale + Troféu Campeão do Mês',
+    p2: '🥈 R$ 80 em Vale + Kit Especial Pamonha Doce',
+    p3: '🥉 Kit Degustação PDHS / Benefício Especial',
+    regras: 'Elegibilidade: mínimo de 80% de presença na escala do mês e fechamentos de caixa sem divergência não justificada.'
+};
+
 let state = loadState();
 let selectedRole = 'geral'; // cargo único: não há mais seleção
 let selectedShift = null;
 let selectedUnit = 'padrao';
 let currentUser = null;
 let repSub = 'rapida';
-let rotinaCiclo = 'D';   // D = diária · S = semanal · M = mensal
+let rotinaCiclo = 'D';      // D = diária · S = semanal · M = mensal
+let rotinaModo = 'card';    // 'card' = 1 passo por vez (Tinder/Duolingo) · 'lista' = mapa completo
+let pistaModo = 'turno';    // 'turno' = corrida do turno · 'mes' = copa mensal multiusuário
+let copaMes = null;         // YYYY-MM exibido na aba Ranking (null = mês atual)
+let demoRivais = false;     // prévia opcional de rivais quando só há 1 usuário no aparelho
+let focusedTaskId = null;   // POP focado manualmente pelo usuário
+let celebPop = null;        // dados do POP recém-concluído para tela rápida de celebração
+let impDrawerOpen = false;  // gaveta rápida de motivo de impedimento (tecla X)
+let sessionCombo = 0;       // sequência de passos concluídos sem impedimento
+let nitroUntil = 0;         // animação visual de turbo no carro
 let currentTasks = null;
 let expandedQ = null;
 let activeTab = 'quests';
-
-const BONUS_DIA = 25;       // bônus ao concluir 100% do turno (piloto Parque Amazônia)
-const TOLERANCIA_MIN = 10;  // tolerância de prazo em minutos (piloto Parque Amazônia)
-let viewDate = null;        // data exibida na aba Equipe (null = hoje)
+let viewDate = null;        // data exibida no histórico (null = hoje)
 let gestorOpen = false;     // sessão do painel do gestor
 
 function loadConfig() {
     let c = {};
     try { c = JSON.parse(localStorage.getItem('pd-config')) || {}; } catch (e) {}
+    c.premiosCorrida = Object.assign({}, PREMIOS_PADRAO, c.premiosCorrida || {});
     return Object.assign({ metaMensal: 0, pin: null, sequencial: true }, c);
 }
 function defaultState() {
-    return { modo: 'tradicional', totalDone: 0, streak: 0, lastDate: null, done: {}, log: {}, venda: 0, todayDate: today(), achievements: {}, d8Count: 0, roles: { geral: { pops: 0 } }, stepsDone: {}, history: {}, config: loadConfig() };
+    return {
+        modo: 'tradicional', totalDone: 0, streak: 0, lastDate: null,
+        done: {}, log: {}, venda: 0, todayDate: today(), achievements: {}, d8Count: 0,
+        roles: { geral: { pops: 0 } }, stepsDone: {}, history: {},
+        checkins: {}, impedimentos: {}, repescagem: {}, adiadosFim: [],
+        config: loadConfig()
+    };
 }
 function localISO(d) {
     const p = n => String(n).padStart(2, '0');
     return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
 function today() { return localISO(new Date()); }
+function relogioHHMM() {
+    if (typeof window !== 'undefined' && window.__mockHora) return window.__mockHora;
+    const a = new Date();
+    return `${String(a.getHours()).padStart(2, '0')}:${String(a.getMinutes()).padStart(2, '0')}`;
+}
 
 // Normaliza o estado de um perfil (virada de dia, campos novos, migração de cargos antigos)
 function normalizeState(s) {
@@ -1468,13 +1913,17 @@ function normalizeState(s) {
     s.done = s.done || {};
     s.stepsDone = s.stepsDone || {};
     s.achievements = s.achievements || {};
+    s.checkins = s.checkins || {};
+    s.impedimentos = s.impedimentos || {};
+    s.repescagem = s.repescagem || {};
+    s.adiadosFim = Array.isArray(s.adiadosFim) ? s.adiadosFim : [];
     s.totalDone = s.totalDone || 0;
     s.streak = s.streak || 0;
     s.d8Count = s.d8Count || 0;
-    if (!s.modo) s.modo = s.char ? 'corrida' : 'tradicional';   // perfis antigos com piloto continuam na Corrida Maluca
+    if (!s.modo) s.modo = s.char ? 'corrida' : 'tradicional';
     if (!s.roles.geral) {
         const tot = Object.values(s.roles).reduce((a, r) => a + ((r && r.pops) || 0), 0);
-        s.roles = { geral: { pops: tot } };   // soma os POPs dos cargos antigos na trilha única
+        s.roles = { geral: { pops: tot } };
     }
     if (s.todayDate !== today()) {
         const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
@@ -1484,17 +1933,21 @@ function normalizeState(s) {
         s.log = manter(s.log);
         s.venda = 0;
         s.stepsDone = manter(s.stepsDone);
+        s.repescagem = manter(s.repescagem);
+        s.adiadosFim = [];
         s.todayAll = false;
         s.todayDate = today();
     }
     // limpa períodos antigos (10 semanas / 14 meses) para não crescer sem limite
     const corteS = semanaKey(new Date(Date.now() - 70 * 864e5)), corteM = mesKey(new Date(Date.now() - 420 * 864e5));
-    [s.done, s.log, s.stepsDone].forEach(o => Object.keys(o).forEach(k => {
+    const corteDia = localISO(new Date(Date.now() - 420 * 864e5));
+    [s.done, s.log, s.stepsDone, s.repescagem].forEach(o => Object.keys(o).forEach(k => {
         if (!k.includes('@')) return;
         const per = k.split('@')[1];
         if ((per.includes('W') && per < corteS) || (!per.includes('W') && per < corteM)) delete o[k];
     }));
-    s.config = loadConfig();   // configuração do gestor é da unidade/aparelho, não do perfil
+    [s.checkins, s.impedimentos, s.history].forEach(o => Object.keys(o || {}).forEach(dk => { if (dk < corteDia) delete o[dk]; }));
+    s.config = loadConfig();
     return s;
 }
 function loadState() { return defaultState(); }   // estado vazio até o login
@@ -1633,7 +2086,7 @@ function initAuth() {
 }
 function save() {
     if (!currentUser) return;
-    if (allTasks().length) state.history[today()] = snapshotToday();
+    if (allTasks().length || (state.checkins && state.checkins[today()])) state.history[today()] = snapshotToday();
     const users = loadUsers();
     if (!users[currentUser]) return;
     const data = Object.assign({}, state);
@@ -1643,13 +2096,93 @@ function save() {
     localStorage.setItem('pd-config', JSON.stringify(state.config));
 }
 
-// ========== PRAZOS, BLOQUEIO SEQUENCIAL, META ==========
-function toMin(hhmm) { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; }
+// ========== TURBO PONTUALIDADE (-15 MIN), REPESCAGEM DE IMPEDIMENTOS E RANKING MENSAL ==========
+function toMin(hhmm) { const [h, m] = String(hhmm || '00:00').split(':').map(Number); return (h || 0) * 60 + (m || 0); }
 function fromMin(min) { const p = n => String(n).padStart(2, '0'); return `${p(Math.floor(min / 60))}:${p(min % 60)}`; }
 
-// Prazos derivados do horário do turno. Ajuste aqui se a gerência definir outros.
 function currentShifts() { return selectedUnit === 'parque' ? SHIFTS_PARQUE : SHIFTS; }
 function unitInfo() { return UNIDADES.find(u => u.id === selectedUnit) || UNIDADES[0]; }
+
+// Horário de início da loja/turno e janela oficial de -15 minutos para ganhar TURBO
+function horarioTurnoInfo(unit, shiftId) {
+    const u = unit || selectedUnit;
+    const s = shiftId || selectedShift || 'abertura';
+    if (u === 'parque') {
+        if (s === 'fechamento') return { inicioLoja: '13:00', metaTurbo: '12:45', fim: '22:00', label: 'até 12:45 (-15 min das 13:00)' };
+        return { inicioLoja: '11:00', metaTurbo: '10:45', fim: '19:00', label: 'até 10:45 (-15 min das 11:00)' };
+    }
+    if (s === 'fechamento') return { inicioLoja: '10:30', metaTurbo: '10:15', fim: '20:00', label: 'até 10:15 (-15 min das 10:30)' };
+    if (s === 'fds') return { inicioLoja: '10:00', metaTurbo: '09:45', fim: '18:15', label: 'até 09:45 (-15 min das 10:00)' };
+    return { inicioLoja: '09:00', metaTurbo: '08:45', fim: '19:00', label: 'até 08:45 (-15 min das 09:00)' };
+}
+
+function checkinHojeObj() {
+    if (!state.checkins) state.checkins = {};
+    return state.checkins[today()] || null;
+}
+function turboHojeAtivo() {
+    const ck = checkinHojeObj();
+    return !!(ck && ck.turbo && ck.pts > 0);
+}
+function avaliarCheckinTurno(manualConfirm) {
+    if (!state.checkins) state.checkins = {};
+    const hoje = today();
+    const atual = state.checkins[hoje];
+    if (atual && atual.turbo) return atual; // já conquistou turbo hoje
+    const info = horarioTurnoInfo(selectedUnit, selectedShift);
+    const hhmm = relogioHHMM();
+    const minAgora = toMin(hhmm);
+    const minTurbo = toMin(info.metaTurbo);
+    const minInicio = toMin(info.inicioLoja);
+
+    if (minAgora <= minTurbo) {
+        state.checkins[hoje] = { hora: hhmm, turbo: true, pts: TURBO_15_PTS, tipo: 'relogio', metaTurbo: info.metaTurbo, inicioLoja: info.inicioLoja, turno: selectedShift, unit: selectedUnit };
+        nitroUntil = Date.now() + 4000;
+        save();
+        showToast(`🚀 TURBO PONTUALIDADE (-15 min)! +${TURBO_15_PTS} pts e largada avançada!`, true);
+        return state.checkins[hoje];
+    }
+    if (manualConfirm && minAgora <= minInicio) {
+        state.checkins[hoje] = { hora: hhmm, turbo: true, pts: TURBO_CONF_PTS, tipo: 'abertura', metaTurbo: info.metaTurbo, inicioLoja: info.inicioLoja, turno: selectedShift, unit: selectedUnit };
+        nitroUntil = Date.now() + 4000;
+        save();
+        showToast(`🚀 TURBO ANTECIPAÇÃO ATIVO! +${TURBO_CONF_PTS} pts registrados às ${hhmm}!`, true);
+        updateGameUI();
+        return state.checkins[hoje];
+    }
+    if (!atual) {
+        state.checkins[hoje] = { hora: hhmm, turbo: false, pts: 0, tipo: 'apos_inicio', metaTurbo: info.metaTurbo, inicioLoja: info.inicioLoja, turno: selectedShift, unit: selectedUnit };
+        save();
+    } else if (manualConfirm && minAgora > minInicio) {
+        showToast(`⏰ Check-in de Turbo encerrou às ${info.inicioLoja} (meta -15 min: ${info.metaTurbo}).`);
+    }
+    return state.checkins[hoje];
+}
+
+function impedimentosDia(iso) {
+    if (!state.impedimentos) state.impedimentos = {};
+    const d = iso || today();
+    if (!Array.isArray(state.impedimentos[d])) state.impedimentos[d] = [];
+    return state.impedimentos[d];
+}
+function isStepAdiadoFim(taskId, stepIdx) {
+    return (state.adiadosFim || []).some(x => x.taskId === taskId && x.stepIdx === stepIdx);
+}
+function isStepEncerradoGestor(taskId, stepIdx) {
+    return impedimentosDia(today()).some(x => x.taskId === taskId && x.stepIdx === stepIdx && !x.resolvido && x.encerradoGestor);
+}
+function isTaskDeferredOnly(t) {
+    if (!t || state.done[t.id]) return false;
+    const st = getStepsChecked(t.id, t.steps.length);
+    let hasDeferred = false;
+    for (let i = 0; i < t.steps.length; i++) {
+        if (!st[i]) {
+            if (isStepAdiadoFim(t.id, i) || isStepEncerradoGestor(t.id, i)) hasDeferred = true;
+            else return false;
+        }
+    }
+    return hasDeferred;
+}
 
 function prazoFor(id) {
     const t = taskById(id);
@@ -1663,18 +2196,25 @@ function prazoFor(id) {
 }
 
 function isUnlocked(id) {
-    if (id.includes('@')) return true;          // semanais e mensais não têm ordem obrigatória
+    if (id.includes('@')) return true;
     if (!state.config.sequencial) return true;
     if (state.done[id]) return true;
     for (const t of allTasks()) {
         if (t.id === id) return true;
-        if (!t.bonus && !state.done[t.id]) return false;
+        if (!t.bonus && !state.done[t.id] && !isTaskDeferredOnly(t)) return false;
     }
     return true;
 }
 function nextTaskId() {
-    const t = allTasks().find(t => !t.bonus && !state.done[t.id]);
-    return t ? t.id : null;
+    const regular = allTasks().find(t => !t.bonus && !state.done[t.id] && !isTaskDeferredOnly(t));
+    if (regular) return regular.id;
+    const rep = (state.adiadosFim || []).find(x => {
+        const t = taskById(x.taskId);
+        return t && !state.done[t.id] && !getStepsChecked(t.id, t.steps.length)[x.stepIdx] && !isStepEncerradoGestor(t.id, x.stepIdx);
+    });
+    if (rep) return rep.taskId;
+    const anyLeft = allTasks().find(t => !t.bonus && !state.done[t.id]);
+    return anyLeft ? anyLeft.id : null;
 }
 
 function metaInfo() {
@@ -1701,15 +2241,326 @@ function dayTasks() {
 
 function snapshotToday() {
     const obrig = dayTasks().filter(t => !t.bonus);
-    const info = metaInfo();
     const hoje = today();
     const done = {}, log = {};
     Object.keys(state.done).forEach(k => { if (!k.includes('@')) done[k] = state.done[k]; });
     Object.keys(state.log).forEach(k => { const l = state.log[k]; if (!k.includes('@') || l.dia === hoje) log[k] = l; });
-    const pts = Object.values(log).reduce((a, l) => a + l.xp, 0);
+    const logsDia = Object.entries(log).filter(([k]) => !k.includes('@')).map(([, l]) => l);
+    const pts = logsDia.reduce((a, l) => a + (l.xp || 0), 0);
+    const noPrazoPts = logsDia.reduce((a, l) => a + (l.prazo && l.noPrazo ? BONUS_PRAZO_PTS : 0), 0);
+    const ck = (state.checkins && state.checkins[hoje]) || null;
+    const turboPts = ck && ck.turbo ? (Number(ck.pts) || 0) : 0;
     const feitas = obrig.filter(t => state.done[t.id]).length;
     const perfeito = obrig.length > 0 && feitas === obrig.length;
-    return { done, log, venda: vendaHoje(), metaDia: metaDiaValor(), total: obrig.length, feitas, pts, bonus: perfeito ? BONUS_DIA : 0, shift: selectedShift, role: selectedRole, unit: selectedUnit };
+    const imps = impedimentosDia(hoje);
+    return {
+        done, log, venda: vendaHoje(), metaDia: metaDiaValor(),
+        total: obrig.length, feitas, pts, noPrazoPts, turboPts,
+        turboHora: ck ? ck.hora : null, turboTipo: ck ? ck.tipo : null,
+        bonus: perfeito ? BONUS_DIA : 0,
+        impedimentos: imps,
+        char: state.char || null, modo: state.modo || 'tradicional',
+        shift: selectedShift, role: selectedRole, unit: selectedUnit
+    };
+}
+
+// Calcula o Ranking Mensal da Corrida Maluca agregando todos os usuários do aparelho
+function calcularRankingMensal(ym, incluirDemo) {
+    const mes = ym || today().slice(0, 7);
+    const users = loadUsers();
+    const hoje = today();
+    const lista = [];
+
+    Object.entries(users).forEach(([uKey, uObj]) => {
+        const uState = (uKey === currentUser) ? state : normalizeState(Object.assign(defaultState(), uObj.data || {}));
+        const hist = Object.assign({}, uState.history || {});
+        if (uKey === currentUser && hoje.startsWith(mes)) {
+            hist[hoje] = snapshotToday();
+        }
+        let ptsPop = 0, ptsPrazo = 0, ptsTurbo = 0, ptsBonus = 0, ptsSemanal = 0;
+        let turbos15 = 0, turnos100 = 0, popsFeitos = 0, popsComPrazo = 0, popsNoPrazo = 0, impResolvidos = 0;
+
+        Object.entries(hist).forEach(([dk, rec]) => {
+            if (!dk.startsWith(mes) || !rec) return;
+            ptsPop += Number(rec.pts) || 0;
+            ptsPrazo += Number(rec.noPrazoPts) || 0;
+            ptsTurbo += Number(rec.turboPts) || 0;
+            ptsBonus += Number(rec.bonus) || 0;
+            if ((Number(rec.turboPts) || 0) > 0) turbos15++;
+            if ((Number(rec.bonus) || 0) > 0 || (rec.total > 0 && rec.feitas === rec.total)) turnos100++;
+            Object.entries(rec.log || {}).forEach(([tid, l]) => {
+                if (tid.includes('@')) return;
+                popsFeitos++;
+                if (l.prazo) { popsComPrazo++; if (l.noPrazo) popsNoPrazo++; }
+            });
+            (rec.impedimentos || []).forEach(imp => { if (imp.resolvido) impResolvidos++; });
+        });
+
+        // Soma também rotinas semanais concluídas pelo colaborador no mês
+        Object.entries(uState.log || {}).forEach(([tid, l]) => {
+            if (tid.includes('@S') || (tid.includes('@') && tid.startsWith('S'))) {
+                if (l && l.dia && l.dia.startsWith(mes)) {
+                    ptsSemanal += Number(l.xp) || 20;
+                    popsFeitos++;
+                }
+            }
+        });
+
+        const charId = uState.char || CHARS[lista.length % CHARS.length].id;
+        const ch = CHARS.find(c => c.id === charId) || CHARS[0];
+        const totalPopsCarreira = (uState.roles && uState.roles.geral && uState.roles.geral.pops) || 0;
+        let grad = RANKS.geral[0];
+        for (let i = RANKS.geral.length - 1; i >= 0; i--) {
+            if (totalPopsCarreira >= RANKS.geral[i].pops) { grad = RANKS.geral[i]; break; }
+        }
+        const pontosMes = ptsPop + ptsPrazo + ptsTurbo + ptsBonus + ptsSemanal;
+        const taxaPrazo = popsComPrazo > 0 ? Math.round((popsNoPrazo / popsComPrazo) * 100) : 100;
+
+        // Progresso de hoje (para exibir carros dos colegas também na pista do turno)
+        let pctHoje = 0, ativoHoje = false, turboHoje = false;
+        if (uKey === currentUser && allTasks().length) {
+            ativoHoje = true;
+            turboHoje = turboHojeAtivo();
+            pctHoje = calcularPctTurnoAtual().pctReal;
+        } else if (hist[hoje] && hist[hoje].total > 0) {
+            ativoHoje = true;
+            turboHoje = (hist[hoje].turboPts || 0) > 0;
+            pctHoje = Math.round((hist[hoje].feitas / hist[hoje].total) * 100);
+        }
+
+        lista.push({
+            key: uKey, nome: uObj.nome || uKey, foto: uObj.foto || null, isMe: uKey === currentUser, isDemo: false,
+            char: ch, grad, pontosMes, ptsPop: ptsPop + ptsSemanal, ptsPrazo, ptsTurbo, ptsBonus,
+            turbos15, turnos100, popsFeitos, taxaPrazo, impResolvidos,
+            pctHoje, ativoHoje, turboHoje
+        });
+    });
+
+    if (incluirDemo && lista.length < 2) {
+        const base = lista[0] ? lista[0].pontosMes : 120;
+        [
+            { key: '__demo1', nome: 'Marina (Exemplo)', charId: 'peter', pontosMes: Math.max(210, base + 45), ptsPop: 120, ptsPrazo: 25, ptsTurbo: 50, ptsBonus: 50, turbos15: 2, turnos100: 2, popsFeitos: 14, taxaPrazo: 95, pctHoje: 62, ativoHoje: true, turboHoje: true },
+            { key: '__demo2', nome: 'Lucas (Exemplo)', charId: 'vigarista', pontosMes: Math.max(165, base + 10), ptsPop: 105, ptsPrazo: 20, ptsTurbo: 25, ptsBonus: 25, turbos15: 1, turnos100: 1, popsFeitos: 11, taxaPrazo: 88, pctHoje: 48, ativoHoje: true, turboHoje: false },
+            { key: '__demo3', nome: 'Camila (Exemplo)', charId: 'dupla', pontosMes: Math.max(115, Math.max(40, base - 30)), ptsPop: 80, ptsPrazo: 15, ptsTurbo: 20, ptsBonus: 0, turbos15: 1, turnos100: 0, popsFeitos: 8, taxaPrazo: 82, pctHoje: 35, ativoHoje: true, turboHoje: false }
+        ].forEach(d => {
+            const ch = CHARS.find(c => c.id === d.charId) || CHARS[0];
+            lista.push({
+                key: d.key, nome: d.nome, foto: null, isMe: false, isDemo: true,
+                char: ch, grad: RANKS.geral[2], pontosMes: d.pontosMes,
+                ptsPop: d.ptsPop, ptsPrazo: d.ptsPrazo, ptsTurbo: d.ptsTurbo, ptsBonus: d.ptsBonus,
+                turbos15: d.turbos15, turnos100: d.turnos100, popsFeitos: d.popsFeitos, taxaPrazo: d.taxaPrazo, impResolvidos: 1,
+                pctHoje: d.pctHoje, ativoHoje: d.ativoHoje, turboHoje: d.turboHoje
+            });
+        });
+    }
+
+    lista.sort((a, b) =>
+        (b.pontosMes - a.pontosMes) ||
+        (b.turnos100 - a.turnos100) ||
+        (b.turbos15 - a.turbos15) ||
+        (b.taxaPrazo - a.taxaPrazo) ||
+        a.nome.localeCompare(b.nome, 'pt-BR')
+    );
+    return lista;
+}
+
+// ========== BASE DE CONHECIMENTO GERENCIAL DOS PASSOS (OLHAR DE GESTOR) ==========
+const STEP_GUIDE = {
+    D1: [
+        { cat: '🚀 PONTUALIDADE & LARGADA TURBO (-15 MIN)', como: 'Chegar na unidade 15 min antes da abertura oficial (10h45 no Parque Amazônia; 08h45/09h45 no Padrão), guardar mochila/celular pessoal, vestir uniforme e iniciar o turno no sistema.', gestor: 'Os 15 minutos prévios garantem que a loja abra no horário cravado já limpa e pronta — e concedem automaticamente o 🚀 TURBO DE LARGADA (+25 pts no Ranking Mensal)!', alerta: 'Abrir as portas atrasado ou ainda limpando na frente do cliente derruba conversão e perde o Turbo.' },
+        { cat: '🔐 SEGURANÇA PATRIMONIAL & VISTORIA', como: 'Desarmar o alarme com sua senha logo ao entrar, manter a porta encostada/trancada durante o preparo interno e fazer inspeção visual de 60s em fechaduras, vitrines de vidro, teto e estoque.', gestor: 'Qualquer avaria noturna, infiltração ou queda de energia deve ser fotografada antes de mexer no ambiente para resguardar a equipe e a gerência.', alerta: 'Nunca inicie a rotina sem checar se vitrines de bongs/pipes e gaveta do caixa estão intactas.' },
+        { cat: '💡 CLIMATIZAÇÃO, ILUMINAÇÃO & FACHADA', como: 'Acionar todos os disjuntores de iluminação interna e spots das vitrines, ligar o ar-condicionado em 22 °C e acender o letreiro luminoso externo.', gestor: 'Fachada acesa e loja climatizada comunicam à distância que a Pamonha Doce está aberta e convidativa, aumentando o fluxo de entrada.', alerta: 'Spot apagado sobre vitrine de vidro reduz em até 30% a atenção nos itens de maior ticket.' },
+        { cat: '🎵 AMBIÊNCIA SONORA & PDV', como: 'Ligar som ambiente na playlist padrão da loja (volume agradável que permita conversa clara no balcão), ligar TV institucional e inicializar o terminal de caixa.', gestor: 'A música cria a identidade da Headshop sem competir com a voz do vendedor na abordagem consultiva.', alerta: 'Proibido colocar músicas fora do perfil da loja ou volume alto que intimide clientes novos.' },
+        { cat: '✨ HIGIENE DE IMPACTO (SALÃO E BANHEIRO)', como: 'Conferir e higienizar tampo do balcão, vidros frontais e banheiro (vaso, pia, espelho, sabonete líquido, papel toalha, papel higiênico e cesto sem lixo do dia anterior).', gestor: 'Banheiro limpo e balcão sem marcas de dedo transmitem zelo e profissionalismo imediato, especialmente em lojas com permanência como o Parque Amazônia.', alerta: 'Jamais inicie o turno com lixeira cheia ou banheiro sem papel/sabonete.' },
+        { cat: '🏷️ EXPOSIÇÃO & PRECIFICAÇÃO VISÍVEL', como: 'Checar se as prateleiras e vitrines amanheceram alinhadas, sem buracos frontais e com etiquetas de preço legíveis voltadas para o cliente.', gestor: 'Produto sem preço visível gera barreira de compra (muitos clientes têm vergonha de perguntar valor de cada item) e fere o Código de Defesa do Consumidor.', alerta: 'Identificou etiqueta solta ou produto recuado? Corrija antes de destrancar a porta principal.' },
+        { cat: '🖥️ SISTEMA TINY ERP PRONTO', como: 'Ligar o computador principal, abrir o navegador no Tiny ERP (PDV e Retaguarda) e abrir a aba 💰 Vendas deste sistema para registro simultâneo.', gestor: 'Deixar o ERP logado antes do primeiro cliente evita fila no balcão e elimina a tentação de "anotar no papel para lançar depois".', alerta: 'Venda não lançada na hora é a causa nº 1 de furo de estoque e divergência de caixa.' },
+        { cat: '📖 MATERIAIS DE APOIO NO BALCÃO', como: 'Deixar acessíveis no caixa o catálogo atualizado, tabela rápida de promoções vigentes (ex.: 3 sedas por R$ 10) e consulta rápida dos POPs.', gestor: 'Padroniza o discurso comercial entre turnos: qualquer colaborador sabe responder preços e combos em 5 segundos.', alerta: 'Retire do balcão papéis rascunhados, copos pessoais ou embalagens abertas.' },
+        { cat: '📲 WHATSAPP BUSINESS ATIVO', como: 'Confirmar que o WhatsApp Business da unidade está conectado (Web/aparelho carregando), conferir mensagens recebidas durante a madrugada e responder por ordem de chegada.', gestor: 'Mensagens noturnas são leads quentes de compra rápida (delivery/retirada). Responder logo na abertura converte vendas antes mesmo do movimento presencial.', alerta: 'Nunca responder primeira mensagem com áudio; use saudação cordial em texto claro.' },
+        { cat: '🔓 PORTAS ABERTAS NO HORÁRIO OFICIAL', como: 'Destrancar totalmente a porta/grade no minuto oficial de abertura, posicionar capacho alinhado e concluir este POP registrando o horário efetivo.', gestor: 'Pontualidade de abertura constrói confiança recorrente da vizinhança e garante os +5 pts extras de POP concluído no prazo.', alerta: 'Concluir o D1 somente quando a loja estiver real e fisicamente aberta para o público.' }
+    ],
+    D2: [
+        { cat: '💵 CONTAGEM FÍSICA DO FUNDO DE TROCO', como: 'Retirar o numerário da gaveta/malote e contar fisicamente nota por nota (R$ 2, R$ 5, R$ 10, R$ 20, R$ 50, R$ 100) e moedas, conferindo também a disponibilidade de troco miúdo.', gestor: 'Quem abre o caixa sem contar assume responsabilidade por eventual diferença deixada no turno anterior. Contagem física leva 2 minutos e blinda toda a equipe.', alerta: 'Se faltar moeda ou nota de R$ 2/R$ 5, avise a gerência cedo para providenciar troco antes do pico.' },
+        { cat: '🖥️ ABERTURA FORMAL NO TINY ERP', como: 'Acessar o módulo PDV do Tiny ERP e informar exatamente o valor físico contado de fundo de caixa para iniciar a sessão do dia.', gestor: 'O valor de abertura no Tiny e o campo "Fundo" na aba 💰 Vendas devem ser idênticos para o cálculo automático de sobra/falta à noite.', alerta: 'Nunca digite valor padrão no Tiny se o valor contado fisicamente na gaveta estiver diferente.' },
+        { cat: '🔍 CONFERÊNCIA COM O FECHAMENTO ANTERIOR', como: 'Comparar o valor contado agora com o fundo de troco separado no fechamento (D6) da noite anterior.', gestor: 'Garante rastreabilidade total entre o turno de fechamento de ontem e o turno de abertura de hoje.', alerta: 'Qualquer centavo divergente deve ser apurado antes da primeira venda em espécie.' },
+        { cat: '🚨 REGISTRO IMEDIATO DE DIVERGÊNCIA (SE HOUVER)', como: 'Se o fundo bateu 100%, confirme e avance; se divergiu, fotografe a contagem, anote o valor real na aba 💰 Vendas e envie mensagem imediata ao gerente.', gestor: 'Transparência imediata resolve 99% dos enganos de contagem sem desgaste entre colegas de turnos diferentes.', alerta: 'Proibido completar ou retirar dinheiro do próprio bolso para "forçar o caixa a bater".' },
+        { cat: '💳 TESTE DAS MAQUININHAS E PIX QR', como: 'Ligar todas as máquinas de cartão, verificar bateria (>50% ou no cabo), sinal Wi-Fi/chip e se a placa/chave Pix oficial da loja está visível.', gestor: 'Maquininha descarregada ou sem sinal na hora de passar cartão trava fila e faz perder venda por impulso.', alerta: 'Confira sempre se todas as bandeiras (Master, Visa, Elo, Amex) estão operando.' },
+        { cat: '🧾 BOBINA TÉRMICA NAS IMPRESSORAS', como: 'Abrir o compartimento da impressora não-fiscal/fiscal e das maquininhas para checar se há rolo de bobina suficiente + 1 bobina reserva ao lado do caixa.', gestor: 'Acabar bobina no meio de um fechamento de relatório das maquininhas atrasa a conciliação noturna.', alerta: 'Se a tarja rosa de fim de bobina já apareceu, troque preventivamente agora.' },
+        { cat: '✍️ VALIDAÇÃO DIGITAL NA ABA VENDAS', como: 'Abrir rapidamente a aba 💰 Vendas deste app, confirmar o valor do Fundo de Troco preenchido e checar a Meta do Dia calculada.', gestor: 'Conecta o operador de caixa à meta comercial diária logo na largada do expediente.', alerta: 'Meta visível desde cedo orienta o ritmo de oferta ativa ("Mais Um") ao longo do turno.' },
+        { cat: '✅ CAIXA LIBERADO PARA OPERAÇÃO', como: 'Confirmar gaveta organizada por divisórias de cédulas, PDV Tiny aberto na tela de nova venda e encerrar o POP D2.', gestor: 'Caixa organizado reduz erros de troco em horários de pico e agiliza o atendimento em menos de 40 segundos.', alerta: 'Mantenha a gaveta sempre fechada quando não estiver realizando troco.' }
+    ],
+    ABER_B: [
+        { cat: '🌴 ÁREA EXTERNA · CONVIVÊNCIA & FACHADA', como: 'Destravar, abrir e alinhar todas as mesas e cadeiras externas respeitando o corredor de passagem de pedestres e entrada da loja.', gestor: 'No Parque Amazônia, as mesas abertas funcionam como vitrine viva: sinalizam movimento e convidam o cliente a consumir bebida gelada + tabacaria.', alerta: 'Verifique se nenhuma cadeira ou mesa está bamba ou molhada antes do uso.' },
+        { cat: '🧽 HIGIENIZAÇÃO DE BISTRÔS E BARRIS', como: 'Passar pano úmido com multiuso/álcool em 100% dos tampos e bordas laterais dos bistrôs e barris, removendo poeira da rua e marcas de copos.', gestor: 'Tampo grudento ou empoeirado afasta clientes e reduz o tempo de permanência e recompra de bebidas.', alerta: 'Limpe também a base superior dos barris onde os clientes apoiam celulares e bolsas.' },
+        { cat: '🚬 CINZEIROS LIMPOS EM CADA PONTO', como: 'Distribuir cinzeiros lavados, secos e sem resíduos em cada mesa, bistrô e barril da área externa.', gestor: 'Evita bitucas jogadas na calçada e reforça a hospitalidade característica da Pamonha Doce.', alerta: 'Cinzeiro com resíduo do dia anterior passa impressão imediata de desleixo.' },
+        { cat: '🧹 CALÇADA E ENTRADA VARRIDAS', como: 'Varrer toda a testada da calçada, folhas secas, entorno dos barris e entrada principal, recolhendo na pá.', gestor: 'A primeira impressão da loja começa 5 metros antes da porta. Calçada limpa valoriza toda a marca.', alerta: 'Nunca varra sujeira para a porta dos comércios vizinhos; recolha no saco de lixo.' }
+    ],
+    ABER_C: [
+        { cat: '💎 VITRINES DE VIDRO CRISTALINAS', como: 'Aplicar limpa-vidros com pano de microfibra seco nas vitrines de bongs, pipes, dichavadores e peças especiais, eliminando digitais e reflexos.', gestor: 'Peças de vidro e headshop premium dependem 100% de brilho visual para justificar seu ticket mais alto.', alerta: 'Use microfibra limpa para não deixar riscos de pano úmido contra a luz dos spots.' },
+        { cat: '🧊 XEQUE MATE & BEBIDAS TRINCANDO', como: 'Conferir temperatura da geladeira, puxar as latas/garrafas de Xeque Mate e bebidas para a fileira frontal e repor do estoque na parte de trás (gelar primeiro o que já estava frio na frente).', gestor: 'Bebida quente mata a venda recorrente da tarde/noite. Repor sempre por trás mantém as unidades da frente geladas para venda imediata.', alerta: 'Se o estoque de Xeque Mate gelado estiver baixo, abasteça agora para dar tempo de gelar até as 14h.' },
+        { cat: '🔥 ZONA DE OURO ABASTECIDA (CAIXA)', como: 'Preencher todos os expositores do balcão do caixa com isqueiros Clipper, sedas Papelito (todas as linhas), piteiras e filtros sem espaços vazios.', gestor: 'A Zona de Ouro responde pela conversão da técnica do "Mais Um" no fechamento da compra, elevando margem líquida.', alerta: 'Conferir se a placa/informação de combo (ex.: 3 sedas por R$ 10) está nítida e alinhada.' }
+    ],
+    PRAT_1: [
+        { cat: '⭐ FRENTEAMENTO TOTAL (PRIORIDADE MÁXIMA)', como: 'Percorrer corredor por corredor puxando pelo menos as 2 primeiras fileiras de cada produto para a borda frontal da prateleira, com rótulos 100% virados para frente.', gestor: 'Prateleira alinhada na linha da frente faz a loja parecer recém-inaugurada e aumenta a compra por visualização em até 25%.', alerta: 'Não pule prateleiras altas ou baixas — o alinhamento deve ser uniforme do topo à base.' },
+        { cat: '🚫 ZERO BURACOS VISUAIS NO SALÃO', como: 'Identificar qualquer espaço vazio deixado pelas vendas da manhã e preencher imediatamente com estoque interno ou redistribuir o facing de forma harmônica.', gestor: 'Buraco na prateleira passa mensagem psicológica de loja desabastecida. Se o SKU esgotou de verdade, anote para a lista de ruptura da gerência.', alerta: 'Nunca esconda produtos diferentes atrás de outra etiqueta de preço.' },
+        { cat: '📦 REPOSIÇÃO DE ALTO GIRO (TABACOS, SEDAS, BEBIDAS)', como: 'Buscar no estoque interno e repor tabacos, sedas, piteiras, carvões e bebidas que saíram desde a abertura, aplicando rigorosamente PVPS (mais antigo na frente).', gestor: 'Garante que o turno da tarde/transição não perca venda nem precise abandonar o balcão no meio do atendimento para caçar item no estoque.', alerta: 'Sempre coloque as unidades novas atrás das unidades que já estavam na prateleira.' }
+    ],
+    PRAT_2: [
+        { cat: '🌙 PREPARAÇÃO PARA O PICO NOTURNO', como: 'Realizar a 2ª rodada completa de frenteamento em todas as estantes e expositores às 18h00–18h30, deixando cada fileira cheia e alinhada.', gestor: 'O horário entre 18h30 e 21h30 concentra o maior fluxo e maior ticket médio; a loja precisa receber o público noturno impecável.', alerta: 'Verifique especialmente piteiras de vidro, sedas king size, tabacos e geladeira.' },
+        { cat: '🔄 REABASTECIMENTO DO ESTOQUE INTERNO', como: 'Repor todos os itens vendidos durante a tarde e avisar no grupo/painel caso algum item Classe A tenha chegado ao estoque mínimo.', gestor: 'Evita ruptura silenciosa durante a noite e antecipa o pedido de reposição para a Caipora.', alerta: 'Conferir se nenhum item ficou fora de lugar após demonstrações a clientes à tarde.' }
+    ],
+    META_15H: [
+        { cat: '🎯 CHECKPOINT COMERCIAL DAS 15H', como: 'Abrir a aba 💰 Vendas, conferir o percentual parcial atingido da Meta do Dia às 15h00 e compartilhar o foco restante com o colega de turno.', gestor: 'Olhar a meta às 15h dá 7 horas reais de reação estratégica antes de fechar a loja — olhar só às 21h50 não muda resultado.', alerta: 'Verifique se todas as vendas feitas até as 15h já estão lançadas na aba 💰 Vendas e no Tiny.' },
+        { cat: '💬 REGRA DO "MAIS UM" ATIVA NO CAIXA', como: 'Em 100% dos atendimentos no caixa, oferecer 1 item complementar coerente ("Leva mais uma piteira / Clipper / Xeque Mate gelado pra acompanhar?").', gestor: 'Subir R$ 5 a R$ 12 em apenas 1 a cada 3 atendimentos bate a meta mensal sem depender de mais tráfego na rua.', alerta: 'Não faça pergunta fechada ("Só isso?"); ofereça sempre um produto concreto na mão!' }
+    ],
+    META_19H: [
+        { cat: '🔥 CHECKPOINT DA TROCA DE TURNO / NOITE (19H)', como: 'Conferir na aba 💰 Vendas quanto falta em R$ e % para cravar 100% da Meta Diária nas últimas 3 horas de operação.', gestor: 'Alinha o foco final da noite: se faltam R$ 250, toda a equipe sabe exatamente quantos atendimentos bem trabalhados fecham o dia no verde.', alerta: 'Garanta que nenhum lançamento da tarde ficou pendente antes do pico das 19h–21h.' },
+        { cat: '⚖️ TÉCNICA DA DUPLA ESCOLHA', como: 'Ao apresentar produtos ou adicionais à noite, oferecer duas opções positivas ("Prefere levar a seda Brown avulsa ou fechar o combo de 3 por R$ 10?").', gestor: 'A técnica de dupla escolha aumenta a conversão de combos promocionais sem soar insistente.', alerta: 'Lembre-se do lançamento correto da promo no PDV Tiny (3x R$ 3,34 com R$ 0,02 de desconto).' }
+    ],
+    STATUS_WPP: [
+        { cat: '📸 VITRINE DIGITAL · LOJA E AMBIENTE', como: 'Gravar foto nítida ou vídeo curto (vertical, lente limpa, boa luz) mostrando a loja pronta, vitrines acesas e clima da área externa.', gestor: 'O Status do WhatsApp da unidade atinge clientes que já compraram conosco e têm altíssima taxa de recompra por lembrete visual.', alerta: 'Limpe a lente da câmera antes de filmar e cuide para não expor dados sensíveis da tela do caixa.' },
+        { cat: '🌟 PRODUTO OU COMBO ESTRELA DO DIA', como: 'Fotografar em destaque 1 novidade, peça de vidro, kit montado ou bebida trincando com chamada clara de valor/benefício.', gestor: 'Gera pedidos diretos de retirada e entrega ("Separa esse pra mim!") ainda no início da noite.', alerta: 'Mostre apenas produtos que tenham estoque disponível imediato na unidade.' },
+        { cat: '📲 PUBLICADO NO WHATSAPP OFICIAL DA LOJA', como: 'Publicar a sequência de 2 a 3 stories no Status do WhatsApp Business da unidade até as 18h00 com legenda convidativa.', gestor: 'Frequência diária antes das 18h captura o cliente exatamente na saída do trabalho.', alerta: 'Responda em menos de 5 minutos quem reagir ou responder aos Status!' }
+    ],
+    FECH_A: [
+        { cat: '🪑 RECOLHIMENTO SEGURO DA ÁREA EXTERNA', como: 'Às 21h30–21h50, avisar cordialmente os últimos clientes externos, recolher, empilhar e guardar todas as mesas, cadeiras e cinzeiros dentro da loja.', gestor: 'Protege o mobiliário da unidade e sinaliza visualmente à rua o encerramento gradual do atendimento.', alerta: 'Confira a contagem total de mesas, cadeiras e cinzeiros antes de fechar.' },
+        { cat: '🧽 LIMPEZA FINAL DE BISTRÔS E BARRIS', como: 'Higienizar tampos de bistrôs e barris e esvaziar/lavar todos os cinzeiros usados à noite.', gestor: 'Evita mau cheiro de cinza/bebida acumulada durante a madrugada e agiliza a abertura da manhã seguinte.', alerta: 'Certifique-se de que nenhuma brasa acesa foi jogada em saco plástico de lixo!' },
+        { cat: '⭐ 3ª ORGANIZAÇÃO DE PRATELEIRAS', como: 'Fazer o giro rápido final puxando produtos para a frente nas seções movimentadas à noite para a loja amanhecer 95% alinhada.', gestor: 'Divide o peso operacional de forma justa entre fechamento e abertura, garantindo padrão contínuo.', alerta: 'Anote qualquer item que zerou à noite para reposição prioritária amanhã.' },
+        { cat: '🗑️ RETIRADA DE TODOS OS LIXOS', como: 'Fechar e retirar os sacos de lixo do banheiro, caixa, salão e área externa, colocando novos sacos limpos em todas as lixeiras.', gestor: 'Zero lixo orgânico ou resíduo pernoitando na loja evita insetos e odores ao abrir.', alerta: 'Conferir se nenhum produto pequeno ou nota fiscal caiu acidentalmente no cesto do caixa.' }
+    ],
+    D6: [
+        { cat: '🗣️ COMUNICAÇÃO DO ENCERRAMENTO', como: 'Finalizar com atenção o último cliente presente e informar que o PDV entrou em rotina de fechamento de caixa.', gestor: 'Evita vendas picadas no meio da contagem física de cédulas, que geram confusão na conciliação.', alerta: 'Nunca apresse um cliente dentro da loja de forma ríspida; feche primeiro a porta/meia-porta.' },
+        { cat: '💵 CONTAGEM DE CÉDULAS E MOEDAS NA ABA VENDAS', como: 'Contar todas as notas de R$ 200 a R$ 2 e moedas da gaveta e digitar a quantidade de cada nota na seção "Contagem do dinheiro" da aba 💰 Vendas.', gestor: 'O contador automático multiplica cada nota, soma moedas e compara instantaneamente com (Fundo + Vendas em Dinheiro).', alerta: 'Conte duas vezes notas dobradas ou novas para evitar notas grudadas.' },
+        { cat: '🖥️ RELATÓRIO DE MOVIMENTAÇÕES DO TINY ERP', como: 'No PDV/Caixa do Tiny ERP, extrair o resumo do dia por forma de pagamento (Crédito, Débito, Pix, StayApp, Dinheiro).', gestor: 'Garante que toda venda lançada na Planilha Diária também baixou estoque corretamente no ERP.', alerta: 'Se o total do Tiny estiver menor que a aba Vendas, alguma venda ficou sem lançar no ERP — lance antes de fechar!' },
+        { cat: '💳 FILIPETA / RELATÓRIO DAS MAQUININHAS', como: 'Imprimir ou abrir na tela o relatório consolidado do dia em cada máquina de cartão (Crédito por bandeira/parcelas, Débito e Pix Maquininha).', gestor: 'É a prova real bancária do que efetivamente entrou nas adquirentes.', alerta: 'Confira também os Pix recebidos direto por chave/QR estático na conta.' },
+        { cat: '✅ CONCILIAÇÃO CRUZADA NAS 3 FONTES', como: 'Na aba 💰 Vendas, comparar cada modalidade e cada grupo Tiny com as maquininhas e marcar o botão "✔ OK" linha por linha.', gestor: 'A conferência cruzada (Maquininha × Aba Vendas × Tiny) zera erros de modalidade trocada e protege o fluxo financeiro.', alerta: 'Só clique em "✔ OK" quando o valor estiver 100% igual nas três pontas.' },
+        { cat: '🛵 CONTROLE DE TROCO DAS ENTREGAS', como: 'Conferir na seção "Controle de troco (entregas)" da aba 💰 Vendas se todo valor que saiu com motoboy já retornou e foi baixado.', gestor: 'Troco de entrega esquecido fora da gaveta gera falsa falta de caixa no fechamento.', alerta: 'O indicador precisa mostrar "✅ Todo o troco voltou" antes de lacrar o caixa.' },
+        { cat: '⚠️ TRATATIVA TRANSPARENTE DE DIFERENÇA', como: 'Se o indicador mostrar "✅ Caixa bateu" (diferença R$ 0,00), avance; se houver sobra ou falta após recontar, registre na observação e comunique o gerente.', gestor: 'Sobra também é erro operacional (troco dado a menor ou venda não lançada) e deve ser declarada integralmente.', alerta: 'Jamais oculte diferença; documentar com clareza permite auditar no dia seguinte.' },
+        { cat: '💼 SEPARAÇÃO DO FUNDO DO PRÓXIMO DIA', como: 'Separar exatamente o valor do fundo de troco padrão (priorizando moedas e notas pequenas) para a abertura de amanhã.', gestor: 'Garante que o turno da manhã seguinte inicie imediatamente sem correria atrás de troco.', alerta: 'Separe fisicamente o fundo de troco da sangria/malote de vendas em espécie.' },
+        { cat: '🔒 GUARDA SEGURA DOS VALORES', como: 'Acondicionar o numerário de sangria/fechamento, comprovantes e fundo de troco no cofre/local seguro designado pela gerência.', gestor: 'Disciplina de segurança financeira inegociável ao fim de cada turno.', alerta: 'Nunca deixe cédulas visíveis sobre o balcão ou com a porta da loja destrancada.' },
+        { cat: '☁️ FECHAMENTO TINY + ENVIO GOOGLE SHEETS', como: 'Concluir o fechamento do caixa no PDV Tiny e verificar na aba 💰 Vendas se o badge de sincronização com a Planilha Diária Google Sheets está atualizado.', gestor: 'Gera automaticamente a aba dd/mm/aaaa na planilha gerencial com todas as 23 formas de pagamento conciliadas.', alerta: 'Se estiver sem internet no minuto, o sistema guarda e sincroniza assim que reconectar.' },
+        { cat: '✍️ ASSINATURA DIGITAL DO FECHAMENTO', como: 'Confirmar que todos os passos do D6 foram cumpridos com rigor pelo operador responsável.', gestor: 'Conquista a medalha "🎯 Caixa 100% Conciliado" e libera o trancamento final da loja (POP D7).', alerta: 'O POP D7 (Fechamento da Loja) só pode ser iniciado após concluir este passo.' }
+    ],
+    D9: [
+        { cat: '📊 CONSOLIDAÇÃO COMERCIAL DO DIA', como: 'Verificar se o total de vendas, quantidade de atendimentos e % da meta diária na aba 💰 Vendas refletem 100% da realidade do dia.', gestor: 'Dados limpos alimentam o cálculo automático da meta dinâmica dos dias restantes do mês.', alerta: 'Dupla checagem rápida: vendas balcão + entregas estão completas?' },
+        { cat: '🚧 REGISTRO DE OCORRÊNCIAS E RUPTURAS', como: 'Revisar se houve produto procurado em falta, equipamento com falha ou impedimento operacional relevante para ação da gerência.', gestor: 'Transforma problemas do balcão em compra rápida e manutenção preventiva.', alerta: 'Anote o nome exato do produto que o cliente pediu e não encontrou.' },
+        { cat: '💬 FEEDBACK DE CLIENTES E NOVIDADES', como: 'Anotar elogios, pedidos de novos sabores/marcas ou dúvidas recorrentes percebidas pela equipe hoje.', gestor: 'Quem ouve o balcão antecipa tendências de Headshop antes da concorrência.', alerta: 'Feedback objetivo de 1 linha já ajuda na reunião semanal (POP S4).' },
+        { cat: '📲 ENVIO DO RESUMO NO GRUPO DA GESTÃO', como: 'Enviar o resumo estruturado do fechamento no grupo oficial da unidade/gestão.', gestor: 'Dá visibilidade executiva diária aos sócios e encerra o ciclo administrativo do dia.', alerta: 'Dica: o gestor também pode copiar o resumo pronto com 1 clique no Painel Gestor.' }
+    ],
+    D7: [
+        { cat: '✅ TRAVA DE SEGURANÇA: D6 CONCLUÍDO', como: 'Confirmar que o POP D6 (Fechamento de Caixa) já consta como 100% finalizado e valores guardados.', gestor: 'Impede que a loja seja desligada e trancada deixando o PDV aberto ou caixa sem conciliar.', alerta: 'Nunca pule o D6 mesmo em noites de menor movimento.' },
+        { cat: '👀 VISTORIA DE SALÃO E ÁREAS INTERNAS', como: 'Percorrer salão, estoque e banheiro certificando-se de que não permaneceu nenhum cliente ou prestador no imóvel.', gestor: 'Segurança física básica antes de desligar luzes e acionar sensores de presença.', alerta: 'Cheque portas internas e depósito.' },
+        { cat: '💎 VITRINES TRANSPARENTES E TRANCADAS', como: 'Verificar se as vitrines de vidro (bongs, pipes, itens de maior valor) estão organizadas e devidamente fechadas.', gestor: 'Protege o mostruário de alto valor agregado e deixa o salão pronto para a manhã.', alerta: 'Guarde as chaves das vitrines no local padrão interno.' },
+        { cat: '🧹 BALCÃO DE ATENDIMENTO LIVRE', como: 'Guardar calculadoras, canetas, catálogos, embalagens e panos nos nichos inferiores, deixando o tampo do balcão 100% limpo.', gestor: 'Balcão limpo facilita a inspeção visual das câmeras e agiliza o D1 de amanhã.', alerta: 'Não deixe copos com líquido próximos ao computador ou maquininhas.' },
+        { cat: '🚿 BANHEIRO HIGIENIZADO E LUZ APAGADA', como: 'Checar torneira fechada, descarga sem vazamento, lixo já recolhido e apagar a luz do banheiro.', gestor: 'Evita desperdício de água/energia durante as 13 horas em que a loja fica fechada.', alerta: 'Vazamento de válvula na madrugada gera conta alta e risco de alagamento.' },
+        { cat: '🔌 DESLIGAMENTO DE EQUIPAMENTOS E LETREIRO', como: 'Encerrar o Windows corretamente no computador, desligar impressora, som, TV e desligar o letreiro externo (mantendo ligados apenas geladeira, roteador/câmeras e central de alarme!).', gestor: 'Aumenta a vida útil dos eletrônicos, economiza energia e protege contra picos elétricos noturnos.', alerta: 'ATENÇÃO: NUNCA desligue o disjuntor da geladeira de bebidas nem do Wi-Fi/câmeras!' },
+        { cat: '❄️ AR-CONDICIONADO E ILUMINAÇÃO INTERNA', como: 'Desligar o ar-condicionado pelo controle remoto (aguardar fechar a aleta) e apagar os circuitos de iluminação de salão e vitrines.', gestor: 'Ar-condicionado esquecido ligado de madrugada é um dos maiores custos evitáveis de loja física.', alerta: 'Olhe para a unidade evaporadora para confirmar o LED apagado.' },
+        { cat: '🚨 ATIVAÇÃO DO ALARME MONITORADO', como: 'Digitar a senha na central de alarme, aguardar o bip de confirmação de todas as zonas fechadas e sair dentro do tempo de disparo.', gestor: 'Garante cobertura total do monitoramento patrimonial durante toda a noite.', alerta: 'Se o painel acusar "zona aberta", verifique qual porta/janela ficou destravada antes de sair.' },
+        { cat: '🔐 TRANCAMENTO DUPLO DE PORTAS E CADEADOS', como: 'Fechar portas de vidro/aço, passar todos os cadeados/fechaduras e puxar fisicamente com a mão para testar o travamento.', gestor: 'O teste físico de puxar o cadeado evita o erro humano clássico de encostar sem girar a tranca.', alerta: 'Confirme todas as travas inferiores e superiores da porta.' },
+        { cat: '🏁 REGISTRO FINAL DE FECHAMENTO (BANDEIRADA!)', como: 'Concluir este último passo registrando o horário de saída e conquistando a Bandeirada Final da Corrida do Turno!', gestor: 'Destrava o Bônus de +25 pts de Turno Perfeito (quando 100% das obrigatórias estão concluídas) no Ranking Mensal!', alerta: 'Parabéns pelo turno! Confira se não restou nenhum passo na Repescagem.' }
+    ]
+};
+
+// Gera instruções detalhadas e pensadas como gestor para QUALQUER passo (Diário, Parque, Semanal ou Mensal)
+function getStepDetails(task, stepIdx) {
+    const rawStep = (task && task.steps && task.steps[stepIdx]) || 'Executar etapa do procedimento';
+    const cod = (task && (task.id in STEP_GUIDE ? task.id : task.cod)) || '';
+    if (STEP_GUIDE[cod] && STEP_GUIDE[cod][stepIdx]) {
+        const g = STEP_GUIDE[cod][stepIdx];
+        return { title: rawStep, cat: g.cat, como: g.como, gestor: g.gestor, alerta: g.alerta };
+    }
+    // Guias dedicados por família de POP (Atendimento, WhatsApp, PDV, Rondas, Limpeza, Semanais e Mensais)
+    if (cod === 'D3') {
+        const d3 = [
+            ['🤝 RECEPÇÃO EM ATÉ 30 SEGUNDOS', 'Olhar nos olhos, sorrir e cumprimentar todo cliente que cruzar a porta em no máximo 30 segundos, mesmo que você esteja atendendo outra pessoa ("Oi, boa tarde! Fique à vontade, já venho te atender!").', 'Cliente ignorado nos primeiros 30 segundos sente desconforto ou sai sem comprar; o reconhecimento imediato reduz abandono de salão.', 'Proibido continuar olhando para tela de celular pessoal quando cliente entra na loja.'],
+            ['🎯 ABORDAGEM CONSULTIVA ABERTA', 'Dar 15–20 segundos para o cliente respirar, observar para qual vitrine ele olha e fazer pergunta aberta ("O que você está procurando hoje?" ou "Quer conhecer alguma linha específica?").', 'Perguntas abertas iniciam diálogo e revelam a necessidade real; "Posso ajudar?" gera resposta automática "Só estou olhando".', 'Não siga o cliente colado em silêncio — seja acolhedor e consultivo.'],
+            ['🧠 IDENTIFICAÇÃO DE PERFIL', 'Perceber na conversa se é iniciante curioso (precisa de explicação simples sem jargão difícil) ou conhecedor recorrente (busca novidades, marcas premium e combos).', 'Adaptar a linguagem aumenta drasticamente a taxa de fechamento e fidelização nos dois públicos.', 'Nunca julgue pelo visual nem invente especificação técnica que você não domina.'],
+            ['💎 APRESENTAÇÃO DE VALOR E DIFERENCIAIS', 'Mostrar 2 ou 3 opções lado a lado (entrada, intermediária e premium), explicando material (borossilicato, silicone, papel não branqueado), durabilidade e custo-benefício.', 'Quando o cliente entende a diferença de qualidade, ele escolhe valor em vez de apenas o menor preço.', 'Manuseie peças de vidro sobre o balcão firme, longe da quina.'],
+            ['➕ VENDA ADICIONAL ("MAIS UM")', 'Sugerir naturalmente o complementar essencial do item escolhido (comprou seda ➔ piteira e Clipper; comprou bong ➔ tela/limpador; comprou tabaco ➔ filtro e bebida gelada).', 'É a alavanca nº 1 de crescimento do Ticket Médio da unidade sem custo extra de aquisição.', 'Ofereça já mostrando o item complementar em mãos!'],
+            ['🏷️ COMUNICAÇÃO DAS PROMOÇÕES VIGENTES', 'Informar combos ativos (ex.: promoção de 3 sedas por R$ 10,00 ou kits da semana) para incentivar compra em maior volume.', 'Aumenta o giro de unidades por cupom e entrega percepção real de vantagem ao cliente.', 'Confira sempre como lançar o desconto certinho no PDV Tiny (ver aba 📖 Manuais).'],
+            ['🧾 FECHAMENTO ÁGIL E EMBALAGEM CUIDADOSA', 'Conduzir ao caixa, confirmar itens e forma de pagamento, proteger vidros/peças frágeis com plástico-bolha/papel e entregar com segurança.', 'Quebra no transporte pós-compra gera frustração; embalar bem valoriza a experiência até a casa do cliente.', 'Confirme aprovação na maquininha ou entrada do Pix antes de entregar a sacola.'],
+            ['🌟 PÓS-VENDA E CONVITE DE RETORNO', 'Agradecer pelo nome (se souber), lembrar do WhatsApp da loja para novidades/entregas e desejar ótimo dia/noite.', 'Um fechamento caloroso transforma comprador eventual em cliente semanal da Pamonha Doce.', 'Mantenha o mesmo entusiasmo em vendas de R$ 5 ou de R$ 300!']
+        ][stepIdx];
+        if (d3) return { title: rawStep, cat: d3[0], como: d3[1], gestor: d3[2], alerta: d3[3] };
+    }
+    if (cod === 'D4') {
+        return {
+            title: rawStep,
+            cat: '📲 ATENDIMENTO DIGITAL WHATSAPP (SLA ≤ 5 MIN)',
+            como: `${rawStep}. Responda sempre em texto claro e cordial, envie foto real da vitrine com preço atualizado, ofereça adicional/combo e registre o pedido fechado no Tiny ERP e na aba 💰 Vendas.`,
+            gestor: 'No WhatsApp, cada minuto acima de 5 min derruba pela metade a chance de fechar porque o cliente chama outra loja. Ao fim do turno, zero conversa pode ficar sem resposta!',
+            alerta: 'Regra de ouro: nunca envie áudio como primeira resposta e confira o comprovante/conta Pix antes de despachar entrega.'
+        };
+    }
+    if (cod === 'D5') {
+        return {
+            title: rawStep,
+            cat: '🧾 PDV TINY & SEGURANÇA DE CAIXA',
+            como: `${rawStep}. Bip/busque o SKU exato no Tiny ERP (nunca lance item genérico ou sabor trocado), lance também na aba 💰 Vendas na modalidade exata (ex.: Crédito Master 2x vs à vista) e valide o pagamento.`,
+            gestor: 'Bipar o SKU exato mantém o estoque do Tiny fiel para a reposição semanal (Coluna G), e escolher a bandeira/parcela certa garante conciliação financeira sem furo.',
+            alerta: 'Em promoções (ex.: 3 sedas por R$ 10), lance 3x R$ 3,34 e aplique R$ 0,02 na aba de desconto do PDV!'
+        };
+    }
+    if (task && task.id && task.id.startsWith('RONDA_')) {
+        return {
+            title: rawStep,
+            cat: '🔄 RONDA DE PADRÃO · BANHEIRO, SALÃO E ÁREA EXTERNA',
+            como: `${rawStep}. Faça inspeção completa no banheiro (papel, sabonete, pia seca, cesto), recolha latas/copos vazios, troque cinzeiros usados por limpos e passe pano rápido nos bistrôs/barris.`,
+            gestor: 'Rondas programadas (13h, 15h30, 18h e bônus noturnos) mantêm a loja com cara de recém-aberta o dia inteiro e garantem a conquista coletiva da unidade.',
+            alerta: 'Ronda rápida leva menos de 6 minutos quando feita no horário — não deixe acumular sujeira para a noite!'
+        };
+    }
+    if (cod === 'D8') {
+        return {
+            title: rawStep,
+            cat: '✨ PADRÃO VISUAL, LIMPEZA & EXPOSIÇÃO',
+            como: `${rawStep}. Utilize pano limpo e produto adequado para cada superfície, puxe os produtos para a frente da prateleira e verifique se todos os itens expostos estão limpos e precificados.`,
+            gestor: 'Ambiente limpo, cheiroso e organizado eleva a percepção de valor dos produtos e sustenta o posicionamento diferenciado da Pamonha Doce.',
+            alerta: 'Ao repor itens do estoque, respeite sempre a ordem PVPS (mais antigos na frente).'
+        };
+    }
+    if (cod === 'S6') {
+        return {
+            title: rawStep,
+            cat: '🔄 REPOSIÇÃO SEMANAL (TINY ➔ SHEETS ➔ CAIPORA)',
+            como: `${rawStep}. Siga o intervalo oficial (do sábado anterior à última reposição até a segunda atual). Na Coluna G do Google Sheets: escreva "OK" se o físico bater com o relatório, ou ajuste o balanço no Tiny e anote a quantidade real se divergir.`,
+            gestor: 'Essa conferência semanal impede ruptura dos campeões de venda na loja e garante que a Caipora envie exatamente o que girou na semana.',
+            alerta: 'Dúvida no passo a passo? Clique em "📖 Manuais" na barra lateral para ver a tabela ilustrada da Coluna G!'
+        };
+    }
+    if (cod === 'S2') {
+        return {
+            title: rawStep,
+            cat: '📦 RECEBIMENTO CEGO & ENTRADA NO SISTEMA',
+            como: `${rawStep}. Conte fisicamente os itens SEM olhar a quantidade da NF antes (conferência cega), cruze com o Espelho do Pedido e lance na forma de pagamento exata (Boleto com QR Code = BOLETO!).`,
+            gestor: 'Evita entrada de mercadoria faltante/avariada no estoque da loja e impede erros graves no contas a pagar financeiro.',
+            alerta: 'Produto novo sem cadastro ou divergência na entrega? NÃO assine sem ressalva e chame a Gerência imediatamente!'
+        };
+    }
+    if (task && task.ciclo === 'S') {
+        return {
+            title: rawStep,
+            cat: `🗓️ ROTINA SEMANAL · ${task.cod} (${task.quando || 'SEMANA'})`,
+            como: `${rawStep}. Execute com dados reais do Tiny ERP / WhatsApp da loja e deixe o registro claro para acompanhamento da gerência.`,
+            gestor: `${task.desc || 'Rotinas semanais previnem perdas de estoque, recuperam vendas pendentes no WhatsApp e mantêm o padrão visual da unidade.'}`,
+            alerta: 'Concluir as rotinas semanais dentro da janela soma +20 pts diretos na Copa Mensal da Corrida Maluca!'
+        };
+    }
+    if (task && task.ciclo === 'M') {
+        return {
+            title: rawStep,
+            cat: `🏆 GESTÃO MENSAL · ${task.cod} (${task.quando || 'MÊS'})`,
+            como: `${rawStep}. Valide os relatórios consolidados do Tiny ERP, Planilha Diária de Vendas e controles financeiros antes de homologar.`,
+            gestor: `${task.desc || 'Procedimento tático-gerencial mensal para fechamento contábil, curva ABC de compras e evolução contínua (PDCA) da unidade.'}`,
+            alerta: 'Respeite as dependências: todos os D6 diários concluídos antes do M1; Curva ABC (M4) concluída antes de Compras (M7).'
+        };
+    }
+    return {
+        title: rawStep,
+        cat: `⚡ EXECUÇÃO PADRONIZADA · ${(task && (task.cod || task.id)) || 'POP'}`,
+        como: `${rawStep}. Execute seguindo o padrão operacional da unidade e confira visualmente o resultado antes de avançar.`,
+        gestor: (task && task.desc) || 'Garante consistência entre turnos, segurança operacional e excelência no atendimento ao cliente.',
+        alerta: 'Se houver bloqueio real (falta de insumo ou defeito), aperte X para registrar impedimento e jogar este passo para o final.'
+    };
 }
 
 
@@ -1744,20 +2595,19 @@ function renderRoleScreen() {
     const u = loadUsers()[currentUser];
     const pops = (state.roles.geral || { pops: 0 }).pops;
     document.getElementById('user-bar').innerHTML = u
-        ? `<label class="ub-avatar" title="Trocar foto">${avatarHTML(46)}<input type="file" accept="image/*" style="display:none" onchange="onTrocarFoto(this)"></label><span style="flex:1">👤 <b>${u.nome}</b><br>${pops} POPs · ${getCurrentRank().icon} ${getCurrentRank().name}</span><button onclick="logout()">Trocar usuário</button>`
+        ? `<label class="ub-avatar" title="Trocar foto">${avatarHTML(46)}<input type="file" accept="image/*" style="display:none" onchange="onTrocarFoto(this)"></label><span style="flex:1">👤 <b>${esc(u.nome)}</b><br>${pops} POPs · ${getCurrentRank().icon} ${getCurrentRank().name}</span><button onclick="logout()">Trocar usuário</button>`
         : '';
 
     document.getElementById('modo-grid').innerHTML = [
-        ['tradicional', '🌽', 'Tradicional', 'Visual limpo nas cores do Pamonha Doce. Foco total na rotina.'],
-        ['corrida', '🏁', 'Corrida Maluca', 'Escolha um piloto, corra contra o rival e veja o tema mudar.']
+        ['tradicional', '🌽', 'Tradicional Limpo', 'Visual claro nas cores Pamonha Doce, 1 passo por vez e barra Duolingo.'],
+        ['corrida', '🏁', 'Corrida Maluca', 'Escolha seu piloto, ganhe Turbo -15min e dispute o Ranking Mensal!']
     ].map(([id, ic, t, d]) => `<div class="modo-card ${state.modo === id ? 'on' : ''}" onclick="setModo('${id}')"><div class="mc-ic">${ic}</div><div class="mc-t">${t}</div><div class="mc-d">${d}</div></div>`).join('');
     document.getElementById('pilot-box').style.display = state.modo === 'corrida' ? 'flex' : 'none';
 
     document.getElementById('pilot-grid').innerHTML = CHARS.map(c => {
-        const t = TEMAS[c.id];
-        return `<div class="pilot-card ${state.char === c.id ? 'selected' : ''}" style="--pc:${c.cores.acc};--pbc:${c.cores.border};--pcard:${c.cores.card};--ptext:${c.cores.text};--pgrad:${c.cores.accD};--pr:${t.cardR};--pbs:${t.cardBs}" onclick="selectChar('${c.id}')">
-            <div class="pc-art" style="border-radius:${t.artR}">${artHTML(c, 'ret', 'pc-img')}</div>
-            <div class="pc-name" style="font-family:${c.fonte}">${c.curto}</div>
+        return `<div class="pilot-card ${state.char === c.id ? 'selected' : ''}" style="--pc:${c.cores.acc};--pbc:${c.cores.border};--pcard:${c.cores.card};--ptext:${c.cores.text};--pgrad:${c.cores.accD};--pr:18px;--pbs:solid" onclick="selectChar('${c.id}')">
+            <div class="pc-art" style="border-radius:16px">${artHTML(c, 'ret', 'pc-img')}</div>
+            <div class="pc-name">${c.curto}</div>
             <span class="plate">${c.num}</span>
             <div class="pc-car">${c.carro}</div>
         </div>`;
@@ -1768,10 +2618,10 @@ function renderRoleScreen() {
            <div class="art-actions">
              <label class="btn">📷 Imagem do personagem<input type="file" accept="image/*" style="display:none" onchange="onArtFile('${ch.id}','ret',this)"></label>
              <label class="btn">🚗 Imagem do veículo<input type="file" accept="image/*" style="display:none" onchange="onArtFile('${ch.id}','car',this)"></label>
-             <button class="btn" onclick="limparArte('${ch.id}')">🗑️ Remover</button>
+             <button class="btn" onclick="limparArte('${ch.id}')">🗑️ Restaurar padrão</button>
            </div>
-           <div class="art-hint">Use imagens que você tenha permissão de usar. Dá para enviar aqui ou colocar os arquivos em <code>assets/personagens/${ch.id}.png</code> (personagem) e <code>${ch.id}-carro.png</code> (veículo).</div>`
-        : 'Toque em um piloto para escolher seu personagem e o tema da corrida.';
+           <div class="art-hint">Os usuários deste aparelho correm juntos e somam pontos para o <b>🏆 Ranking Mensal da Corrida Maluca</b>.</div>`
+        : 'Toque em um piloto para escolher seu carro na pista e participar do Ranking Mensal.';
 
     document.getElementById('unit-grid').innerHTML = UNIDADES.map(u2 =>
         `<div class="role-card ${selectedUnit===u2.id?'selected':''}" onclick="selectUnit('${u2.id}')">
@@ -1781,13 +2631,15 @@ function renderRoleScreen() {
         </div>`).join('');
 
     const sg = document.getElementById('shift-grid');
-    sg.innerHTML = currentShifts().map(s2 =>
-        `<div class="shift-card ${selectedShift===s2.id?'selected':''}" onclick="selectShift('${s2.id}')">
+    sg.innerHTML = currentShifts().map(s2 => {
+        const hInfo = horarioTurnoInfo(selectedUnit, s2.id);
+        return `<div class="shift-card ${selectedShift===s2.id?'selected':''}" onclick="selectShift('${s2.id}')">
             <div class="shift-icon">${s2.icon}</div>
             <div class="shift-name">${s2.name}</div>
             <div class="shift-time">${s2.time}</div>
-        </div>`
-    ).join('');
+            <div style="font-size:0.6rem;font-weight:800;color:var(--green);margin-top:4px">🚀 Turbo: até ${hInfo.metaTurbo}</div>
+        </div>`;
+    }).join('');
 
     document.getElementById('start-btn').disabled = !(selectedShift && (state.modo === 'tradicional' || state.char));
     updateBranding();
@@ -1804,12 +2656,17 @@ function selectUnit(id) {
 function selectRole(id) { selectedRole = id; renderRoleScreen(); }
 function selectShift(id) { selectedShift = id; renderRoleScreen(); }
 
-
 function startGame() {
     if (!selectedRole || !selectedShift || (state.modo === 'corrida' && !state.char)) return;
     currentTasks = buildDaily(selectedUnit, selectedShift);
     rotinaCiclo = 'D';
+    rotinaModo = 'card';
+    pistaModo = 'turno';
+    focusedTaskId = null;
+    celebPop = null;
+    impDrawerOpen = false;
     viewDate = null;
+    avaliarCheckinTurno(false);
     showScreen('game-screen');
     updateGameUI();
 }
@@ -1819,10 +2676,33 @@ function goBack() {
     renderRoleScreen();
 }
 
-// ========== GAME UI ==========
+// ========== GAME UI & PISTA PANORÂMICA ==========
 function allTasks() {
     if (!currentTasks) return [];
     return currentTasks.sections.flatMap(sec => sec.tasks);
+}
+
+function calcularPctTurnoAtual() {
+    const tasks = allTasks().filter(t => !t.bonus);
+    if (!tasks.length) return { pctReal: 0, pctVisual: 0, chegou: false, feitas: 0, total: 0, repescCount: 0 };
+    let soma = 0;
+    let repescCount = 0;
+    tasks.forEach(t => {
+        if (state.done[t.id]) { soma += 1; return; }
+        const st = getStepsChecked(t.id, t.steps.length);
+        soma += Math.min(0.95, st.filter(Boolean).length / t.steps.length);
+        const rep = (state.repescagem && state.repescagem[t.id]) || [];
+        rep.forEach(idx => { if (!st[idx] && !isStepEncerradoGestor(t.id, idx)) repescCount++; });
+    });
+    (state.adiadosFim || []).forEach(x => {
+        const t = taskById(x.taskId);
+        if (t && !state.done[t.id] && !getStepsChecked(t.id, t.steps.length)[x.stepIdx] && !isStepEncerradoGestor(t.id, x.stepIdx)) repescCount++;
+    });
+    const pctReal = Math.min(100, (soma / tasks.length) * 100);
+    const chegou = tasks.every(t => state.done[t.id]);
+    // Chegar 15 min antes dá largada com Turbo (+8% de impulso visual na pista, mantendo 100% só na conclusão real)
+    const pctVisual = chegou ? 100 : (turboHojeAtivo() ? Math.min(96, Math.max(8, pctReal + 8)) : pctReal);
+    return { pctReal, pctVisual, chegou, feitas: tasks.filter(t => state.done[t.id]).length, total: tasks.length, repescCount };
 }
 
 function updateGameUI() {
@@ -1832,20 +2712,17 @@ function updateGameUI() {
     const all = allTasks();
     const doneCount = all.filter(t => state.done[t.id]).length;
 
-    // Header
     document.getElementById('h-rank-icon').textContent = rank.icon;
     document.getElementById('h-rank-name').textContent = rank.name;
     const now = new Date();
     const days = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
     document.getElementById('h-date').innerHTML = `${days[now.getDay()]} ${now.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}`;
 
-    // Stats
     document.getElementById('st-pops').textContent = rs.pops;
     document.getElementById('st-rank').textContent = rank.name;
     document.getElementById('st-streak').textContent = state.streak;
     document.getElementById('st-today').textContent = `${doneCount}/${all.length}`;
 
-    // Rank bar
     const curPops = rs.pops;
     if (next) {
         const prevPops = rank.pops;
@@ -1859,17 +2736,16 @@ function updateGameUI() {
         document.getElementById('rank-next-lbl').textContent = 'GRADUAÇÃO MÁXIMA';
     }
 
-    // Bottom bar
     document.querySelectorAll('.bb-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(`bb-${activeTab}`).classList.add('active');
+    const activeBtn = document.getElementById(`bb-${activeTab}`);
+    if (activeBtn) activeBtn.classList.add('active');
 
-    // Linha do dia: pontos e meta
     const snap = snapshotToday();
-    const mi = metaInfo();
     const metaD = metaDiaValor();
     const pctMeta = metaD > 0 ? Math.round((vendaHoje() / metaD) * 100) : null;
+    const ptsDiaTotal = (snap.pts || 0) + (snap.noPrazoPts || 0) + (snap.turboPts || 0) + (snap.bonus || 0);
     document.getElementById('day-line').innerHTML =
-        `<span>${unitInfo().icon} ${unitInfo().name}</span><span>⭐ Pontos hoje: <b>${snap.pts + snap.bonus}</b>${snap.bonus ? ' (+bônus)' : ''}</span>` +
+        `<span>${unitInfo().icon} ${unitInfo().name}</span><span>⭐ Pontos hoje: <b>${ptsDiaTotal}</b></span>` +
         `<span>🎯 Meta do dia: <b>${pctMeta === null ? '—' : pctMeta + '%'}</b></span>`;
 
     renderPoster();
@@ -1877,72 +2753,212 @@ function updateGameUI() {
     renderContent();
 }
 
-// Pista de corrida: o avatar sai da largada e avança a cada item marcado até a chegada
 function paceDoTurno() {
     const sh = currentShifts().find(x => x.id === selectedShift);
     if (!sh) return 0;
     const [ini, fim] = sh.time.split('–').map(toMin);
-    const n = new Date();
-    const agora = n.getHours() * 60 + n.getMinutes();
+    const agora = toMin(relogioHHMM());
     return Math.max(0, Math.min(100, ((agora - ini) / (fim - ini)) * 100));
 }
 
-// Pista de corrida: o piloto (foto da pessoa no veículo do personagem) avança a cada item marcado
+function setPistaModo(m) { pistaModo = m; renderRace(); }
+function pularParaPop(id) {
+    if (!isUnlocked(id) && !state.done[id]) { showToast('🔒 Conclua ou adie o POP anterior primeiro!'); return; }
+    focusedTaskId = id;
+    celebPop = null;
+    impDrawerOpen = false;
+    rotinaModo = 'card';
+    if (activeTab !== 'quests') activeTab = 'quests';
+    updateGameUI();
+}
+function irParaRepescagem() {
+    celebPop = null;
+    impDrawerOpen = false;
+    rotinaModo = 'card';
+    // Foca na primeira tarefa desbloqueada que possui item pendente em repescagem ou adiado
+    const tasks = allTasks();
+    const comRep = tasks.find(t => !state.done[t.id] && isUnlocked(t.id) && (
+        ((state.repescagem && state.repescagem[t.id]) || []).some(i => !getStepsChecked(t.id, t.steps.length)[i] && !isStepEncerradoGestor(t.id, i)) ||
+        (state.adiadosFim || []).some(x => x.taskId === t.id && !getStepsChecked(t.id, t.steps.length)[x.stepIdx] && !isStepEncerradoGestor(t.id, x.stepIdx))
+    ));
+    if (comRep) focusedTaskId = comRep.id;
+    if (activeTab !== 'quests') activeTab = 'quests';
+    updateGameUI();
+}
+
 function renderRace() {
     const el = document.getElementById('race');
+    if (!el) return;
+    // Mostra a pista destacada no topo apenas na Rotina e no Ranking para não poluir Vendas/Gestor/Manuais
+    const mostrarHud = activeTab === 'quests' || activeTab === 'copa';
+    el.classList.toggle('hidden-hud', !mostrarHud);
+    if (!mostrarHud) return;
+
     const tasks = allTasks().filter(t => !t.bonus);
     if (!tasks.length) { el.innerHTML = ''; return; }
+    const { pctReal, pctVisual, chegou, feitas, total, repescCount } = calcularPctTurnoAtual();
+    const hInfo = horarioTurnoInfo(selectedUnit, selectedShift);
+    const ck = checkinHojeObj();
+    const podeConfirmarTurbo = !(ck && ck.turbo) && toMin(relogioHHMM()) <= toMin(hInfo.inicioLoja);
+    const turboBadge = (ck && ck.turbo)
+        ? `<span class="rpill turbo-on" title="Entrada registrada às ${ck.hora}">🚀 TURBO -15MIN (+${ck.pts} pts)</span>`
+        : (podeConfirmarTurbo
+            ? `<button class="rpill turbo-ask" onclick="avaliarCheckinTurno(true)" title="Confirmar chegada 15 min antes da abertura">🚀 Cheguei -15min! Ativar Turbo (+${TURBO_CONF_PTS} pts)</button>`
+            : `<span class="rpill" title="Chegar até ${hInfo.metaTurbo} ativa o Turbo de largada">⏰ Turbo -15min: até ${hInfo.metaTurbo}</span>`);
+
+    const repBadge = repescCount > 0
+        ? `<button class="rpill repesc" onclick="irParaRepescagem()" title="Passos com impedimento aguardando no final para completar a corrida">🔄 ${repescCount} na Repescagem</button>`
+        : '';
+
     const c = charAtual();
-    let soma = 0;
-    tasks.forEach(t => {
-        if (state.done[t.id]) { soma += 1; return; }
-        const st = (state.stepsDone && state.stepsDone[t.id]) || [];
-        soma += Math.min(0.95, st.filter(Boolean).length / t.steps.length);   // só chega a 100% com a tarefa concluída
-    });
-    const pct = Math.min(100, (soma / tasks.length) * 100);
-    const chegou = tasks.every(t => state.done[t.id]);
-    if (!c) {   // versão tradicional: barra de progresso limpa
-        const feitas = tasks.filter(t => state.done[t.id]).length;
-        const pace = paceDoTurno();
-        const atras = pct + 0.5 < pace;
-        const fases = (currentTasks.sections || []).map(sec => { const ob = sec.tasks.filter(t => !t.bonus); return ob.length && ob.every(t => state.done[t.id]); });
-        el.innerHTML = `<div class="prog-card"><div class="prog-top"><span>🏁 Progresso do turno</span><span>${Math.round(pct)}% · ${feitas}/${tasks.length}</span></div>
-            <div class="prog-bar"><div style="width:${pct}%"></div></div>
-            <div class="prog-dots">${fases.map(f => `<i class="${f ? 'on' : ''}"></i>`).join('')}</div>
-            ${chegou ? '<div class="prog-note ok">✅ Turno completo! Parabéns, equipe.</div>' : `<div class="prog-note ${atras ? 'behind' : 'ok'}">${atras ? '⚠️ Abaixo do ritmo do horário (' + Math.round(pace) + '% do turno já passou)' : '👍 No ritmo do turno'}</div>`}</div>`;
+    // ---------- VERSÃO TRADICIONAL: BARRA SEGMENTADA ESTILO DUOLINGO ----------
+    if (!c) {
+        const curNext = nextTaskId();
+        const segs = tasks.map(t => {
+            const st = getStepsChecked(t.id, t.steps.length);
+            const temRep = ((state.repescagem && state.repescagem[t.id]) || []).some(i => !st[i]) || isTaskDeferredOnly(t);
+            const cls = state.done[t.id] ? 'done' : (temRep ? 'rep' : (curNext === t.id ? 'now' : ''));
+            return `<i class="${cls}" title="${esc(t.cod + ' — ' + t.name)}"></i>`;
+        }).join('');
+        el.innerHTML = `<div class="trad-hud-box">
+            <div class="race-hud-top" style="margin-bottom:4px">
+                <div class="race-hud-title">
+                    <div class="rht-badge">🌽</div>
+                    <div>
+                        <h4>Progresso do Turno · ${Math.round(pctReal)}% concluído (${feitas}/${total} POPs)</h4>
+                        <p>${chegou ? '✅ Todas as rotinas obrigatórias concluídas!' : 'Complete um passo por vez com atenção ao padrão do gestor.'}</p>
+                    </div>
+                </div>
+                <div class="race-pills">
+                    ${turboBadge}
+                    ${sessionCombo >= 2 ? `<span class="rpill gold">🔥 Sequência x${sessionCombo}</span>` : ''}
+                    ${repBadge}
+                    <button class="rpill btn-pill" onclick="showTab('copa')">🏆 Ranking Mensal</button>
+                </div>
+            </div>
+            <div class="trad-segs">${segs}</div>
+        </div>`;
         if (chegou && state.celebrado !== today()) {
-            state.celebrado = today();
-            save();
-            showToast('🏁 Turno completo, parabéns!', true);
+            state.celebrado = today(); save();
+            showToast('🏁 Turno 100% completo! +25 pts no Ranking Mensal!', true);
         }
         return;
     }
-    const cps = tasks.map((t, i) => `<span class="cp ${state.done[t.id] ? 'done' : ''}" style="left:${((i + 1) / tasks.length) * 100}%" title="${t.name}">${state.done[t.id] && c ? c.marco : ''}</span>`).join('');
 
-    const rival = CHARS.find(x => x.id === (state.char === 'vigarista' ? 'penelope' : 'vigarista'));
-    const pace = paceDoTurno();
-    const atras = pct + 0.5 < pace;
-    const nota = chegou ? '' : (atras
-        ? `<div class="race-rivalnote behind">⚠️ ${rival.curto} está à frente! (${Math.round(pace)}% do turno)</div>`
-        : `<div class="race-rivalnote ahead">👍 Você lidera sobre ${rival.curto}!</div>`);
+    // ---------- CORRIDA MALUCA: PISTA PANORÂMICA MULTIUSUÁRIO NO TOPO ----------
+    const rankingMes = calcularRankingMensal(copaMes || today().slice(0, 7), demoRivais);
+    const meuIdxMes = Math.max(0, rankingMes.findIndex(r => r.isMe));
+    const emNitro = Date.now() < nitroUntil || turboHojeAtivo();
 
-    el.innerHTML = `<div class="race-labels"><span>🚦 Largada</span><span>${Math.round(pct)}% do percurso</span><span>Chegada</span></div>
-        <div class="race-track">
-            <div class="race-road"><div class="race-fill" style="width:${pct}%"></div>${cps}</div>
-            <div class="race-rival" style="left:${pace}%" title="${rival.nome}"><div class="rr-row"><span class="rr-car">${artHTML(rival, 'car', 'rr-img')}</span></div></div>
-            <div class="race-runner ${chegou ? 'arrived' : 'running'}" style="left:${pct}%">${avatarHTML(34)}<div class="rr-row"><span class="rr-car">${c ? artHTML(c, 'car', 'rr-img') : '🏁'}</span>${c ? `<span class="rr-pet">${c.pet}</span>` : ''}</div>${chegou ? '<span class="race-crown">🏆</span>' : ''}</div>
-            <div class="race-finish">🏁</div>
-        </div>${nota}`;
+    let racersHTML = '';
+    let barraPct = pctVisual;
+    let subHud = '';
+
+    if (pistaModo === 'mes') {
+        const maxPts = Math.max(150, ...rankingMes.map(r => r.pontosMes));
+        const meuMes = rankingMes.find(r => r.isMe) || rankingMes[0];
+        barraPct = meuMes ? Math.min(94, Math.max(6, (meuMes.pontosMes / maxPts) * 88 + 4)) : 10;
+        subHud = `🏆 Disputa mensal entre os colaboradores · 1º lugar leva: ${esc((state.config.premiosCorrida || PREMIOS_PADRAO).p1)}`;
+        racersHTML = rankingMes.slice(0, 6).reverse().map((r, idxRev, arr) => {
+            const rankPos = arr.length - idxRev;
+            const left = Math.min(93, Math.max(6, (r.pontosMes / maxPts) * 86 + 5));
+            const laneBottom = r.isMe ? 4 : (14 + ((rankPos % 3) * 12));
+            const medal = rankPos === 1 ? '🥇' : (rankPos === 2 ? '🥈' : (rankPos === 3 ? '🥉' : `${rankPos}º`));
+            return `<div class="racer-pin ${r.isMe ? 'hero' : 'peer'}" style="left:${left}%;bottom:${laneBottom}px">
+                <span class="rp-tag">${medal} ${esc(r.nome.split(' ')[0])} · ${r.pontosMes} pts</span>
+                <div class="rp-body">
+                    ${r.isMe && emNitro ? '<span class="rp-flame">🔥</span>' : ''}
+                    ${artHTML(r.char, 'car', 'rr-img')}
+                </div>
+            </div>`;
+        }).join('');
+    } else {
+        // Pista do Turno: carro do colaborador + carros dos colegas ativos hoje + carro-madrinha do horário
+        const colegasHoje = rankingMes.filter(r => !r.isMe && r.ativoHoje).slice(0, 3);
+        const pace = Math.round(paceDoTurno());
+        const rivalChar = CHARS.find(x => x.id === (state.char === 'vigarista' ? 'penelope' : 'vigarista')) || CHARS[0];
+        const peers = colegasHoje.map((col, idx) => {
+            const pLeft = Math.min(93, Math.max(5, col.pctHoje));
+            return `<div class="racer-pin peer" style="left:${pLeft}%;bottom:${22 + (idx % 2) * 14}px">
+                <span class="rp-tag">${esc(col.nome.split(' ')[0])} · ${col.pctHoje}%</span>
+                <div class="rp-body">${artHTML(col.char, 'car', 'rr-img')}</div>
+            </div>`;
+        }).join('');
+        const pacePin = `<div class="racer-pin peer" style="left:${Math.min(92, Math.max(5, pace))}%;bottom:28px">
+            <span class="rp-tag">⏱️ Ritmo ${pace}%</span>
+            <div class="rp-body">${artHTML(rivalChar, 'car', 'rr-img')}</div>
+        </div>`;
+        const heroLeft = chegou ? 95 : Math.min(93, Math.max(6, pctVisual));
+        const heroPin = `<div class="racer-pin hero" style="left:${heroLeft}%">
+            <span class="rp-tag">${chegou ? '🏆 CHEGOU 100%!' : `VOCÊ · ${Math.round(pctReal)}%${turboHojeAtivo() ? ' 🚀' : ''}`}</span>
+            <div class="rp-body">
+                ${emNitro ? '<span class="rp-flame">🔥</span>' : ''}
+                ${artHTML(c, 'car', 'rr-img')}
+            </div>
+        </div>`;
+        racersHTML = peers + pacePin + heroPin;
+        subHud = turboHojeAtivo()
+            ? `🚀 Turbo de Pontualidade (-15 min) ativo! Impedimentos (X) não avançam o carro e voltam no final.`
+            : `⚡ Conclua no padrão (L) para avançar · Impedimento (X) não avança e volta no final para você completar!`;
+    }
+
+    const curNext = nextTaskId();
+    const cpsHTML = tasks.map(t => {
+        const done = !!state.done[t.id];
+        const unlocked = isUnlocked(t.id);
+        const st = getStepsChecked(t.id, t.steps.length);
+        const feitosSt = st.filter(Boolean).length;
+        const temRep = ((state.repescagem && state.repescagem[t.id]) || []).some(i => !st[i] && !isStepEncerradoGestor(t.id, i)) || isTaskDeferredOnly(t);
+        const isNow = (focusedTaskId || curNext) === t.id && !done;
+        const cls = done ? 'done' : (isNow ? 'now' : (temRep ? 'rep' : (unlocked ? '' : 'lock')));
+        const ic = done ? '✓' : (temRep ? '🔄' : (isNow ? '⚡' : (unlocked ? '•' : '🔒')));
+        return `<button class="cp-pill ${cls}" onclick="pularParaPop('${t.id}')" title="${esc(t.name)}">${ic} ${t.cod || t.id} ${done ? '' : `(${feitosSt}/${t.steps.length})`}</button>`;
+    }).join('') + (repescCount > 0 ? `<button class="cp-pill rep" onclick="irParaRepescagem()">🔄 Repescagem (${repescCount})</button>` : '');
+
+    el.innerHTML = `<div class="race-hud-box">
+        <div class="race-hud-top">
+            <div class="race-hud-title">
+                <div class="rht-badge">${c.piloto}</div>
+                <div>
+                    <h4>${esc(c.curto.toUpperCase())} · ${pistaModo === 'mes' ? 'Copa Mensal da Corrida Maluca' : `Corrida do Turno (${feitas}/${total} POPs)`}</h4>
+                    <p>${subHud}</p>
+                </div>
+            </div>
+            <div class="race-pills">
+                <button class="rpill btn-pill ${pistaModo === 'turno' ? 'on' : ''}" onclick="setPistaModo('turno')">⚡ Pista do Turno</button>
+                <button class="rpill btn-pill ${pistaModo === 'mes' ? 'on' : ''}" onclick="setPistaModo('mes')">🏆 Corrida Mensal (${rankingMes.length})</button>
+                <span class="rpill gold" onclick="showTab('copa')" style="cursor:pointer" title="Abrir Pódio e Prêmios do Mês">🏆 ${meuIdxMes + 1}º no Mês</span>
+                ${turboBadge}
+                ${sessionCombo >= 2 ? `<span class="rpill">🔥 Combo x${sessionCombo}</span>` : ''}
+                ${repBadge}
+            </div>
+        </div>
+        <div class="speedway-arena">
+            <div class="speedway-horizon"></div>
+            <div class="speedway-top-labels">
+                <span>🚦 LARGADA</span>
+                <span>${pistaModo === 'mes' ? 'RANKING MENSAL AO VIVO' : `${Math.round(pctReal)}% CONCLUÍDO`}</span>
+                <span>CHEGADA 🏁</span>
+            </div>
+            <div class="speedway-asphalt"></div>
+            <div class="speedway-fill" style="width:${Math.min(100, barraPct)}%"></div>
+            ${racersHTML}
+            <div class="speedway-finish"></div>
+        </div>
+        <div class="speedway-cps">${cpsHTML}</div>
+    </div>`;
+
     if (chegou && state.celebrado !== today()) {
         state.celebrado = today();
         save();
-        showToast(frasePiloto('chegada', '🏁 Linha de chegada! Turno completo, parabéns!'), true);
+        showToast(frasePiloto('chegada', '🏁 Linha de chegada! Turno 100% completo!'), true);
     }
 }
 
 function renderContent() {
     const main = document.getElementById('main-content');
     if (activeTab === 'quests') renderQuests(main);
+    else if (activeTab === 'copa') renderCopa(main);
     else if (activeTab === 'vendas') renderVendas(main);
     else if (activeTab === 'team') renderTeam(main);
     else if (activeTab === 'ach') renderAchievements(main);
@@ -1961,14 +2977,275 @@ function dateNavQ(vd) {
     </div>`;
 }
 function irOntem() { const d = new Date(); d.setDate(d.getDate() - 1); setViewDate(localISO(d)); }
-function setCiclo(c) { rotinaCiclo = c; expandedQ = ''; renderContent(); }
+function setCiclo(c) { rotinaCiclo = c; focusedTaskId = null; celebPop = null; impDrawerOpen = false; expandedQ = ''; renderContent(); }
+function setRotinaModo(m) { rotinaModo = m; impDrawerOpen = false; renderContent(); }
 
 function cicloResumo(c) {
     const l = c === 'D' ? allTasks().filter(t => !t.bonus) : periodicTasks(c);
     return `${l.filter(t => state.done[t.id]).length}/${l.length}`;
 }
 
-// cartão de tarefa (usado na diária, no histórico e nas rotinas semanais/mensais)
+// Localiza o passo ativo para o Modo Iterativo (1 passo por vez + fila de repescagem no final)
+function pickStepFromTask(t) {
+    if (!t || state.done[t.id]) return null;
+    const st = getStepsChecked(t.id, t.steps.length);
+    const rep = (state.repescagem && state.repescagem[t.id]) || [];
+    // 1) Passos ainda não tentados nesta rodada
+    for (let i = 0; i < t.steps.length; i++) {
+        if (!st[i] && !rep.includes(i) && !isStepAdiadoFim(t.id, i) && !isStepEncerradoGestor(t.id, i)) {
+            return { task: t, stepIdx: i, isRepesc: false, isFimCorrida: false };
+        }
+    }
+    // 2) Passos que tiveram impedimento e voltaram no final deste POP
+    for (const i of rep) {
+        if (i >= 0 && i < t.steps.length && !st[i] && !isStepAdiadoFim(t.id, i) && !isStepEncerradoGestor(t.id, i)) {
+            return { task: t, stepIdx: i, isRepesc: true, isFimCorrida: false };
+        }
+    }
+    return null;
+}
+
+function getActiveCardContext() {
+    const lista = rotinaCiclo === 'D' ? allTasks() : periodicTasks(rotinaCiclo);
+    if (!lista.length) return { empty: true };
+
+    // Se o usuário clicou especificamente num POP desbloqueado (ex.: bônus ou semanal/mensal)
+    if (focusedTaskId) {
+        const ft = lista.find(x => x.id === focusedTaskId);
+        if (ft && !state.done[ft.id] && (rotinaCiclo !== 'D' || isUnlocked(ft.id))) {
+            const p = pickStepFromTask(ft);
+            if (p) return p;
+            // Se só sobrou item adiado para o fim da corrida e clicou nele manualmente, traz de volta agora!
+            const st = getStepsChecked(ft.id, ft.steps.length);
+            const adIdx = st.findIndex((ck, idx) => !ck && isStepAdiadoFim(ft.id, idx) && !isStepEncerradoGestor(ft.id, idx));
+            if (adIdx >= 0) return { task: ft, stepIdx: adIdx, isRepesc: true, isFimCorrida: true };
+        } else {
+            focusedTaskId = null;
+        }
+    }
+
+    // 1) Fluxo normal das tarefas obrigatórias não adiadas
+    const regulares = rotinaCiclo === 'D' ? lista.filter(t => !t.bonus) : lista;
+    for (const t of regulares) {
+        if (state.done[t.id]) continue;
+        if (rotinaCiclo === 'D' && !isUnlocked(t.id)) break;
+        const p = pickStepFromTask(t);
+        if (p) return p;
+    }
+
+    // 2) Repescagem Final da Corrida: passos adiados retornam no final para dar chance de completar 100%!
+    if (rotinaCiclo === 'D') {
+        for (const item of (state.adiadosFim || [])) {
+            const t = lista.find(x => x.id === item.taskId);
+            if (t && !state.done[t.id]) {
+                const st = getStepsChecked(t.id, t.steps.length);
+                if (!st[item.stepIdx] && !isStepEncerradoGestor(t.id, item.stepIdx)) {
+                    return { task: t, stepIdx: item.stepIdx, isRepesc: true, isFimCorrida: true };
+                }
+            }
+        }
+    }
+
+    return { allFinished: true, lista };
+}
+
+function animarCardIterativo(dir, cb) {
+    const card = document.getElementById('iter-card-el');
+    const stOk = document.getElementById('iter-stamp-ok');
+    const stFail = document.getElementById('iter-stamp-fail');
+    if (!card) { cb(); return; }
+    if (dir === 'right' && stOk) stOk.classList.add('show');
+    if (dir === 'left' && stFail) stFail.classList.add('show');
+    card.style.transform = dir === 'right' ? 'translateX(85px) rotate(5deg)' : 'translateX(-85px) rotate(-5deg)';
+    card.style.opacity = '0.22';
+    setTimeout(cb, 190);
+}
+
+function completeActiveStep() {
+    const ctx = getActiveCardContext();
+    if (!ctx || !ctx.task) return;
+    const { task, stepIdx } = ctx;
+    if (rotinaCiclo === 'D' && !isUnlocked(task.id)) { showToast('🔒 Conclua o passo anterior primeiro!'); return; }
+
+    animarCardIterativo('right', () => {
+        const steps = getStepsChecked(task.id, task.steps.length);
+        steps[stepIdx] = true;
+        // Remove das filas de repescagem e marca impedimento anterior como resolvido!
+        if (state.repescagem && state.repescagem[task.id]) {
+            state.repescagem[task.id] = state.repescagem[task.id].filter(i => i !== stepIdx);
+        }
+        if (Array.isArray(state.adiadosFim)) {
+            state.adiadosFim = state.adiadosFim.filter(x => !(x.taskId === task.id && x.stepIdx === stepIdx));
+        }
+        impedimentosDia(today()).forEach(imp => {
+            if (imp.taskId === task.id && imp.stepIdx === stepIdx && !imp.resolvido) {
+                imp.resolvido = true;
+                imp.horaResolvido = relogioHHMM();
+            }
+        });
+        // Se for o passo 0 do D1 ("Chegar 15 minutos antes") antes do início do turno, garante o Turbo!
+        if (task.cod === 'D1' && stepIdx === 0 && !turboHojeAtivo()) {
+            const hInfo = horarioTurnoInfo(selectedUnit, selectedShift);
+            if (toMin(relogioHHMM()) <= toMin(hInfo.inicioLoja)) avaliarCheckinTurno(true);
+        }
+
+        sessionCombo++;
+        nitroUntil = Date.now() + 1500;
+        impDrawerOpen = false;
+
+        if (steps.every(Boolean)) {
+            celebPop = { id: task.id, cod: task.cod || task.id, name: task.name, xp: task.xp };
+            focusedTaskId = null;
+            toggleQ(task.id);
+        } else {
+            save();
+            updateGameUI();
+        }
+    });
+}
+
+function openImpedimentoDrawer() {
+    impDrawerOpen = true;
+    renderContent();
+    const obs = document.getElementById('imp-obs-in');
+    if (obs && obs.focus) setTimeout(() => obs.focus(), 40);
+}
+function closeImpedimentoDrawer() {
+    impDrawerOpen = false;
+    renderContent();
+}
+
+function registrarImpedimentoPasso(motivo, acaoModo) {
+    const ctx = getActiveCardContext();
+    if (!ctx || !ctx.task) return;
+    const { task, stepIdx, isRepesc } = ctx;
+    const obsEl = document.getElementById('imp-obs-in');
+    const obs = obsEl ? obsEl.value.trim() : '';
+
+    animarCardIterativo('left', () => {
+        // REGRA OFICIAL: Impedimento NÃO avança o carro (stepsDone continua false e combo zera)
+        sessionCombo = 0;
+        nitroUntil = 0;
+        impDrawerOpen = false;
+
+        const u = loadUsers()[currentUser];
+        const turnoNome = (currentShifts().find(s => s.id === selectedShift) || {}).name || '—';
+        const listaImp = impedimentosDia(today());
+        let existente = listaImp.find(x => x.taskId === task.id && x.stepIdx === stepIdx && !x.resolvido);
+        if (existente) {
+            existente.motivo = motivo;
+            if (obs) existente.obs = obs;
+            existente.hora = relogioHHMM();
+            existente.tentativas = (existente.tentativas || 1) + 1;
+            if (acaoModo === 'encerrar') existente.encerradoGestor = true;
+        } else {
+            existente = {
+                id: Date.now() + Math.random(),
+                taskId: task.id, cod: task.cod || task.id, taskName: task.name,
+                stepIdx, stepText: task.steps[stepIdx],
+                motivo, obs, hora: relogioHHMM(),
+                por: u ? u.nome : 'Equipe', turno: turnoNome,
+                tentativas: 1, resolvido: false,
+                encerradoGestor: acaoModo === 'encerrar'
+            };
+            listaImp.push(existente);
+        }
+
+        if (!state.repescagem) state.repescagem = {};
+        if (!Array.isArray(state.repescagem[task.id])) state.repescagem[task.id] = [];
+        const steps = getStepsChecked(task.id, task.steps.length);
+        const repAtual = state.repescagem[task.id];
+        const outrosNaoTentados = task.steps.some((_, idx) => idx !== stepIdx && !steps[idx] && !repAtual.includes(idx) && !isStepAdiadoFim(task.id, idx) && !isStepEncerradoGestor(task.id, idx));
+        const haOutrosPopsAdiante = rotinaCiclo === 'D' && allTasks().some(t => !t.bonus && t.id !== task.id && !state.done[t.id] && !isTaskDeferredOnly(t));
+
+        if (acaoModo === 'encerrar') {
+            focusedTaskId = null;
+            showToast('📋 Impedimento final enviado ao Painel do Gestor (sem avançar carro).');
+        } else if (acaoModo === 'fim_corrida' || (!outrosNaoTentados && haOutrosPopsAdiante)) {
+            state.repescagem[task.id] = repAtual.filter(i => i !== stepIdx);
+            if (!isStepAdiadoFim(task.id, stepIdx)) state.adiadosFim.push({ taskId: task.id, stepIdx });
+            focusedTaskId = null;
+            showToast('🔄 Carro não avançou · Passo movido para o Final da Corrida!');
+        } else {
+            state.repescagem[task.id] = repAtual.filter(i => i !== stepIdx).concat([stepIdx]);
+            showToast('⚠️ Carro não avançou · Passo movido para o final para nova tentativa!');
+        }
+
+        save();
+        updateGameUI();
+    });
+}
+
+function avancarAposCelebracao() {
+    celebPop = null;
+    updateGameUI();
+}
+
+function bindSwipeIterativo() {
+    const card = document.getElementById('iter-card-el');
+    if (!card) return;
+    let startX = null, startY = null;
+    card.addEventListener('pointerdown', e => {
+        if (impDrawerOpen || e.target.closest('button, input, textarea, a')) return;
+        startX = e.clientX; startY = e.clientY;
+    });
+    card.addEventListener('pointermove', e => {
+        if (startX === null) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        if (Math.abs(dy) > Math.abs(dx) && Math.abs(dx) < 25) return;
+        card.style.transform = `translateX(${dx * 0.42}px) rotate(${dx * 0.028}deg)`;
+        const ok = document.getElementById('iter-stamp-ok');
+        const fl = document.getElementById('iter-stamp-fail');
+        if (ok) ok.classList.toggle('show', dx > 50);
+        if (fl) fl.classList.toggle('show', dx < -50);
+    });
+    const endSwipe = e => {
+        if (startX === null) return;
+        const dx = e.clientX - startX;
+        startX = null; startY = null;
+        const ok = document.getElementById('iter-stamp-ok');
+        const fl = document.getElementById('iter-stamp-fail');
+        if (ok) ok.classList.remove('show');
+        if (fl) fl.classList.remove('show');
+        if (dx > 85) { completeActiveStep(); }
+        else if (dx < -85) { card.style.transform = ''; openImpedimentoDrawer(); }
+        else { card.style.transform = ''; }
+    };
+    card.addEventListener('pointerup', endSwipe);
+    card.addEventListener('pointercancel', () => { startX = null; card.style.transform = ''; });
+}
+
+// Atalhos de teclado: L / Seta Direita = Concluído | X / Seta Esquerda = Impedimento | Enter = Próximo POP
+if (typeof window !== 'undefined' && window.addEventListener && !window.__popKeyBound) {
+    window.__popKeyBound = true;
+    window.addEventListener('keydown', e => {
+        const gs = document.getElementById('game-screen');
+        if (!gs || !gs.classList.contains('active')) return;
+        if (activeTab !== 'quests' || rotinaModo !== 'card' || viewDate !== null) return;
+        if (rotinaCiclo === 'M' && !gestorOpen) return;
+        const tag = (e.target && e.target.tagName) || '';
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag) || (e.target && e.target.isContentEditable)) {
+            if (e.key === 'Escape' && impDrawerOpen) { e.preventDefault(); closeImpedimentoDrawer(); }
+            return;
+        }
+        const k = (e.key || '').toLowerCase();
+        if (celebPop) {
+            if (k === 'l' || e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault(); avancarAposCelebracao();
+            }
+            return;
+        }
+        if (impDrawerOpen) {
+            if (e.key === 'Escape') { e.preventDefault(); closeImpedimentoDrawer(); }
+            return;
+        }
+        if (k === 'l' || e.key === 'ArrowRight') { e.preventDefault(); completeActiveStep(); }
+        else if (k === 'x' || e.key === 'ArrowLeft') { e.preventDefault(); openImpedimentoDrawer(); }
+    });
+}
+
+// Cartão compacto na visão de Mapa Completo / Histórico
 function cardHTML(t, o) {
     const total = t.steps.length;
     const feitos = o.checked.filter(Boolean).length;
@@ -1976,35 +3253,41 @@ function cardHTML(t, o) {
     let prazoHtml = '';
     if (o.done && reg) {
         const quando = (t.ciclo === 'S' || t.ciclo === 'M') && reg.dia ? ' em ' + fmtData(reg.dia) : '';
-        prazoHtml = `<div class="q-prazo ${reg.noPrazo ? 'ok' : 'late'}">✓ ${reg.quem} às ${reg.hora}${quando}${reg.prazo ? ' · ' + (reg.noPrazo ? 'no prazo' : 'após o prazo ' + reg.prazo) : ''}</div>`;
+        prazoHtml = `<div class="q-prazo ${reg.noPrazo ? 'ok' : 'late'}">✓ ${reg.quem} às ${reg.hora}${quando}${reg.prazo ? ' · ' + (reg.noPrazo ? 'no prazo (+5 pts)' : 'após o prazo ' + reg.prazo) : ''}</div>`;
     } else if (o.prazo) {
-        prazoHtml = `<div class="q-prazo">⏰ Até ${o.prazo}</div>`;
+        prazoHtml = `<div class="q-prazo">⏰ Prazo ideal: até ${o.prazo}</div>`;
     } else if (t.quando) {
-        prazoHtml = `<div class="q-prazo">📅 Sugestão: ${t.quando}</div>`;
+        prazoHtml = `<div class="q-prazo">📅 Janela sugerida: ${t.quando}</div>`;
     }
-    const tags = (t.u === 'parque' ? '<span class="q-tag2 pq">🌴 Parque Amazônia</span>' : '') + (t.ciclo ? `<span class="q-tag2">${t.ciclo === 'S' ? '🗓️ Semanal' : '🏆 Mensal'}</span>` : '');
+    const temRep = !o.done && o.hoje && (((state.repescagem && state.repescagem[t.id]) || []).some(i => !o.checked[i]) || isTaskDeferredOnly(t));
+    const tags = (t.u === 'parque' ? '<span class="q-tag2 pq">🌴 Parque Amazônia</span>' : '') +
+        (temRep ? '<span class="q-tag2" style="border-color:#F59E0B;color:#D97706">🔄 Em Repescagem</span>' : '') +
+        (t.ciclo ? `<span class="q-tag2">${t.ciclo === 'S' ? '🗓️ Semanal' : '🏆 Mensal'}</span>` : '');
     const clique = o.readonly ? '' : `onclick="handleQ('${t.id}',event)"`;
     return `<div class="quest ${o.done ? 'done' : ''} ${o.exp ? 'expanded' : ''} ${!o.unlocked ? 'locked' : ''} ${o.isNext ? 'next' : ''} ${o.readonly ? 'readonly' : ''}" ${clique}>
         <div class="q-head">
             <div class="q-check">${o.done ? '✓' : (o.unlocked ? '' : '🔒')}</div>
             <div class="q-info">
-                <div class="q-code">${o.isNext ? '<span class="q-tag next">👉 PRÓXIMO PASSO</span>' : ''}${t.bonus ? '<span class="q-tag bonus">BÔNUS OPCIONAL</span>' : ''}${t.cod || t.id}</div>
+                <div class="q-code">${o.isNext ? '<span class="q-tag next">👉 EM FOCO</span>' : ''}${t.bonus ? '<span class="q-tag bonus">BÔNUS OPCIONAL</span>' : ''}${t.cod || t.id}</div>
                 <div class="q-name">${t.name}</div>
                 ${t.desc ? `<div class="q-desc">${t.desc}</div>` : ''}
-                <div class="q-progress">${o.done ? '✅ Completo' : (o.unlocked ? `${feitos}/${total} itens` : '🔒 Conclua o passo anterior')}</div>
+                <div class="q-progress">${o.done ? '✅ Concluído' : (o.unlocked ? `${feitos}/${total} passos concluídos` : '🔒 Conclua o POP anterior')}</div>
                 ${prazoHtml}
                 ${tags ? `<div class="q-tags">${tags}</div>` : ''}
             </div>
             <div class="q-xp">${o.done ? '✓' : '+'} ${t.xp}</div>
         </div>
-        <div class="q-steps">${t.steps.map((st, i) => {
-            const ck = o.checked[i];
-            const acao = o.readonly ? '' : `onclick="event.stopPropagation();toggleStep('${t.id}',${i},${total})"`;
-            return `<div class="q-step ${ck ? 'checked' : ''}" ${acao}>
-                <div class="q-step-check">${ck ? '✓' : ''}</div>
-                <div class="q-step-text">${st}</div>
-            </div>`;
-        }).join('')}</div>
+        <div class="q-steps">
+            ${!o.done && !o.readonly && o.unlocked ? `<div style="padding:6px 0 10px"><button class="btn primary" style="width:100%" onclick="event.stopPropagation();pularParaPop('${t.id}')">🃏 Abrir este POP no Modo Iterativo (Passo a Passo)</button></div>` : ''}
+            ${t.steps.map((st, i) => {
+                const ck = o.checked[i];
+                const acao = o.readonly ? '' : `onclick="event.stopPropagation();toggleStep('${t.id}',${i},${total})"`;
+                return `<div class="q-step ${ck ? 'checked' : ''}" ${acao}>
+                    <div class="q-step-check">${ck ? '✓' : ''}</div>
+                    <div class="q-step-text">${st}</div>
+                </div>`;
+            }).join('')}
+        </div>
     </div>`;
 }
 
@@ -2022,9 +3305,187 @@ function trilhaFases(sections) {
     }).join('') + `</div>`;
 }
 
+function renderIterativoStage(listaCiclo) {
+    // 1) Tela rápida de celebração quando um POP inteiro acaba de fechar
+    if (celebPop) {
+        const prox = nextTaskId();
+        const proxTask = prox ? taskById(prox) : null;
+        return `<div class="celeb-card">
+            <div style="font-size:3rem;line-height:1;margin-bottom:8px">🏁✨</div>
+            <span class="rpill turbo-on" style="margin-bottom:10px">✓ POP ${esc(celebPop.cod)} CONCLUÍDO! +${celebPop.xp} PTS</span>
+            <h2 style="font-size:1.45rem;font-weight:900;margin:8px 0 6px">${esc(celebPop.name)}</h2>
+            <p style="font-size:0.85rem;color:var(--text2);margin-bottom:18px;line-height:1.5">${frasePiloto('tarefa', 'Excelente execução no padrão Pamonha Doce! Seu carro avançou na pista.')}</p>
+            <div class="row" style="justify-content:center">
+                <button class="act-btn ok" style="min-width:250px" onclick="avancarAposCelebracao()">
+                    <span>${proxTask ? `Próximo: ${proxTask.cod} — ${proxTask.name}` : 'Ver Resumo da Corrida 🏁'}</span>
+                    <span class="kbd-hint">Enter / L</span>
+                </button>
+                <button class="btn" onclick="celebPop=null;setRotinaModo('lista')">🗺️ Ver Mapa Completo</button>
+            </div>
+        </div>`;
+    }
+
+    const ctx = getActiveCardContext();
+    // Seletor rápido de POPs quando estiver em Semanal ou Mensal
+    const seletorPeriodico = rotinaCiclo !== 'D'
+        ? `<div class="speedway-cps" style="margin-bottom:12px">${listaCiclo.map(t => {
+            const d = !!state.done[t.id];
+            const on = ctx.task && ctx.task.id === t.id;
+            return `<button class="cp-pill ${d ? 'done' : (on ? 'now' : '')}" onclick="pularParaPop('${t.id}')">${d ? '✓' : '⚡'} ${t.cod} · ${esc(t.name)}</button>`;
+        }).join('')}</div>`
+        : '';
+
+    if (ctx.allFinished || !ctx.task) {
+        const bonusPendentes = rotinaCiclo === 'D' ? allTasks().filter(t => t.bonus && !state.done[t.id]) : [];
+        const impsAbertos = impedimentosDia(today()).filter(x => !x.resolvido);
+        return seletorPeriodico + `<div class="celeb-card">
+            <div style="font-size:3.2rem;line-height:1;margin-bottom:10px">${impsAbertos.length ? '⚠️🏁' : '🏆🏁'}</div>
+            <span class="rpill ${impsAbertos.length ? 'gold' : 'turbo-on'}">${impsAbertos.length ? 'ROTINA FINALIZADA COM PENDÊNCIA AO GESTOR' : '100% DA ROTINA CONCLUÍDA!'}</span>
+            <h2 style="font-size:1.5rem;font-weight:900;margin:10px 0 6px">${impsAbertos.length ? 'Atenção às pendências registradas' : 'Parabéns! Corrida concluída no padrão!'}</h2>
+            <p style="font-size:0.84rem;color:var(--text2);max-width:520px;margin:0 auto 16px;line-height:1.55">
+                ${impsAbertos.length
+                    ? `Existem <b>${impsAbertos.length} impedimento(s)</b> não resolvidos reportados ao gestor. Se você conseguiu resolver algum agora, reabra abaixo para completar 100% da corrida!`
+                    : 'Todos os passos foram validados no padrão operacional e seus pontos já estão somados no Ranking Mensal da Corrida Maluca!'}
+            </p>
+            ${impsAbertos.length ? `<div style="margin-bottom:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">${impsAbertos.map(imp => `<button class="btn primary" onclick="reabrirImpedimento(${imp.id})">🔄 Tentar resolver: ${esc(imp.cod)} (Passo ${imp.stepIdx + 1})</button>`).join('')}</div>` : ''}
+            ${bonusPendentes.length ? `<div style="margin-bottom:16px"><div style="font-size:0.74rem;font-weight:800;color:var(--gold);margin-bottom:8px">⭐ RONDAS EXTRAS OPCIONAIS (+PONTOS BÔNUS NO RANKING):</div><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">${bonusPendentes.map(b => `<button class="btn" onclick="pularParaPop('${b.id}')">➕ Iniciar ${b.cod}: ${esc(b.name)} (+${b.xp} pts)</button>`).join('')}</div></div>` : ''}
+            <div class="row" style="justify-content:center">
+                <button class="btn primary" onclick="showTab('copa')">🏆 Ver Ranking Mensal & Prêmios</button>
+                <button class="btn" onclick="showTab('vendas')">💰 Ir para Aba Vendas / Caixa</button>
+                <button class="btn" onclick="setRotinaModo('lista')">🗺️ Revisar Lista Completa</button>
+            </div>
+        </div>`;
+    }
+
+    const { task, stepIdx, isRepesc, isFimCorrida } = ctx;
+    const steps = getStepsChecked(task.id, task.steps.length);
+    const repArr = (state.repescagem && state.repescagem[task.id]) || [];
+    const info = getStepDetails(task, stepIdx);
+    const prazo = rotinaCiclo === 'D' ? prazoFor(task.id) : null;
+    const impAnt = impedimentosDia(today()).find(x => x.taskId === task.id && x.stepIdx === stepIdx && !x.resolvido);
+
+    // Atalho contextual inteligente (Vendas / Manuais)
+    let ctxBar = '';
+    if (['D2', 'D6', 'META_15H', 'META_19H', 'D5', 'D5F', 'D9'].includes(task.id) || ['D2', 'D6', 'D5', 'D9'].includes(task.cod)) {
+        const mDia = metaDiaValor();
+        const vHoje = vendaHoje();
+        const pMeta = mDia > 0 ? Math.round((vHoje / mDia) * 100) : null;
+        ctxBar = `<div class="iter-ctx-bar">
+            <span>💰 Vendas lançadas hoje: <b style="color:var(--green)">${fmtBRL(vHoje)}</b>${pMeta !== null ? ` (${pMeta}% da meta)` : ''}</span>
+            <button class="btn" style="min-height:32px;padding:5px 10px" onclick="showTab('vendas')">Abrir 💰 Vendas / Caixa ➔</button>
+        </div>`;
+    } else if (['S6', 'S2'].includes(task.cod)) {
+        ctxBar = `<div class="iter-ctx-bar">
+            <span>📖 Precisa consultar o guia ilustrado deste processo?</span>
+            <button class="btn" style="min-height:32px;padding:5px 10px" onclick="showTab('proc')">Abrir 📖 Manuais PDHS ➔</button>
+        </div>`;
+    }
+
+    const dots = task.steps.map((_, i) => {
+        const cls = i === stepIdx ? 'now' : (steps[i] ? 'done' : ((repArr.includes(i) || isStepAdiadoFim(task.id, i)) ? 'rep' : ''));
+        return `<span class="${cls}"></span>`;
+    }).join('');
+
+    const motivos = [
+        ['📦 Falta de estoque / insumo', 'Falta de estoque ou insumo'],
+        ['🔌 Equipamento / sistema c/ defeito', 'Equipamento ou sistema com defeito'],
+        ['🏃 Cliente aguardando no balcão', 'Fila ou cliente aguardando no balcão'],
+        ['⏳ Aguardando entrega / gerência', 'Aguardando entrega ou retorno da gerência'],
+        ['✏️ Outro impedimento operacional', 'Outro impedimento operacional']
+    ];
+
+    const haOutrosPops = rotinaCiclo === 'D' && allTasks().some(t => !t.bonus && t.id !== task.id && !state.done[t.id] && !isTaskDeferredOnly(t));
+
+    return seletorPeriodico + `<div class="iter-stage">
+        <div class="iter-card" id="iter-card-el">
+            <div class="iter-stamp ok" id="iter-stamp-ok">✓ CONCLUÍDO!</div>
+            <div class="iter-stamp fail" id="iter-stamp-fail">✕ IMPEDIMENTO</div>
+
+            <div class="iter-meta">
+                <span class="iter-pop-tag">${isRepesc ? '🔄 REPESCAGEM · ' : ''}${esc(task.cod || task.id)} — ${esc(task.name)}</span>
+                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                    <span class="rpill">Passo ${stepIdx + 1} de ${task.steps.length}</span>
+                    ${prazo ? `<span class="rpill gold">⏰ Até ${prazo}</span>` : ''}
+                    <span class="rpill">+${task.xp} XP</span>
+                </div>
+            </div>
+
+            <div class="iter-step-dots">${dots}</div>
+
+            ${isRepesc ? `<div class="iter-repesc-banner">
+                <b>🔄 ${isFimCorrida ? 'Repescagem Final da Corrida' : 'Passo em Repescagem'}:</b> este item teve impedimento antes${impAnt ? ` (<em>"${esc(impAnt.motivo)}"</em> às ${impAnt.hora})` : ''} e voltou agora no final para você ter chance de concluir 100% da corrida!
+            </div>` : ''}
+
+            <div class="iter-cat">${esc(info.cat)}</div>
+            <h2 class="iter-title">${esc(info.title)}</h2>
+
+            <div class="iter-guides">
+                <div class="iguide">
+                    <div class="iguide-hd">📋 Como Executar no Padrão</div>
+                    <p>${esc(info.como)}</p>
+                </div>
+                <div class="iguide mgr">
+                    <div class="iguide-hd">🎯 Olhar do Gestor & Critério de Qualidade</div>
+                    <p>${esc(info.gestor)}</p>
+                    ${info.alerta ? `<div class="iguide-warn"><b>🚫 Atenção:</b> ${esc(info.alerta)}</div>` : ''}
+                </div>
+            </div>
+
+            ${ctxBar}
+
+            ${!impDrawerOpen ? `
+            <div class="iter-actions">
+                <button class="act-btn fail" onclick="openImpedimentoDrawer()">
+                    <span>✕ Impedimento / Não avança</span>
+                    <span class="kbd-hint">X / ←</span>
+                </button>
+                <button class="act-btn ok" onclick="completeActiveStep()">
+                    <span>✓ Concluído no Padrão (+Avançar)</span>
+                    <span class="kbd-hint">L / →</span>
+                </button>
+            </div>
+            <div style="text-align:center;font-size:0.68rem;color:var(--text2);margin-top:10px;font-weight:600">
+                💡 Dica: arraste o cartão para os lados ou use as teclas <b>L</b> (Concluído) e <b>X</b> (Impedimento — volta no final).
+            </div>` : `
+            <div class="imp-drawer">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+                    <span style="font-size:0.78rem;font-weight:800;color:#D97706">⚠️ Qual impedimento ocorreu? (O carro não avança e o passo volta no final)</span>
+                    <button class="btn" style="min-height:30px;padding:4px 10px" onclick="closeImpedimentoDrawer()">Cancelar (Esc)</button>
+                </div>
+                <input class="field" id="imp-obs-in" placeholder="Observação rápida p/ o gestor (opcional — ex.: acabou papel toalha, técnico acionado)" style="margin-top:8px;margin-bottom:4px">
+                <div class="imp-reasons">
+                    ${motivos.map(([rot, val]) => `<button class="imp-rbtn" onclick="registrarImpedimentoPasso('${val}','padrao')">${rot}</button>`).join('')}
+                </div>
+                ${isRepesc && haOutrosPops ? `<button class="btn" style="width:100%;margin-top:4px;border-color:#F59E0B" onclick="registrarImpedimentoPasso('Aguardando resolução até o fim do turno','fim_corrida')">🔄 Jogar para o Final da Corrida e liberar o próximo POP agora</button>` : ''}
+                ${isRepesc && !haOutrosPops ? `<button class="btn danger" style="width:100%;margin-top:6px" onclick="registrarImpedimentoPasso('${impAnt ? esc(impAnt.motivo) : 'Impedimento persistente no encerramento'}','encerrar')">📋 Impossível resolver hoje: enviar justificativa final ao Gestor</button>` : ''}
+            </div>`}
+        </div>
+    </div>`;
+}
+
+function reabrirImpedimento(impId) {
+    const imp = impedimentosDia(today()).find(x => x.id === impId);
+    if (!imp) return;
+    imp.encerradoGestor = false;
+    if (!isStepAdiadoFim(imp.taskId, imp.stepIdx)) state.adiadosFim.push({ taskId: imp.taskId, stepIdx: imp.stepIdx });
+    focusedTaskId = imp.taskId;
+    rotinaModo = 'card';
+    save();
+    updateGameUI();
+}
+
 function renderQuests(el) {
     const ciclos = [['D', '📅 Diária'], ['S', '🗓️ Semanal'], ['M', '🏆 Mensal' + (gestorOpen ? '' : ' 🔒')]];
-    let html = `<div class="ciclos">` + ciclos.map(([c, n]) => `<button class="${rotinaCiclo === c ? 'on' : ''}" onclick="setCiclo('${c}')">${n}<small>${cicloResumo(c)} feitas</small></button>`).join('') + `</div>`;
+    const vd = viewDate || today();
+    const hoje = vd === today();
+
+    let html = `<div class="rotina-toolbar">
+        <div class="ciclos">${ciclos.map(([c, n]) => `<button class="${rotinaCiclo === c ? 'on' : ''}" onclick="setCiclo('${c}')">${n}<small>${cicloResumo(c)} feitas</small></button>`).join('')}</div>
+        ${(hoje || rotinaCiclo !== 'D') ? `<div class="view-switch">
+            <button class="${rotinaModo === 'card' ? 'on' : ''}" onclick="setRotinaModo('card')">🃏 Passo a Passo</button>
+            <button class="${rotinaModo === 'lista' ? 'on' : ''}" onclick="setRotinaModo('lista')">🗺️ Mapa Completo</button>
+        </div>` : ''}
+    </div>`;
 
     // ---------- semanal / mensal ----------
     if (rotinaCiclo !== 'D') {
@@ -2041,9 +3502,14 @@ function renderQuests(el) {
         if (rotinaCiclo === 'S') {
             const seg = new Date(hojeD); seg.setDate(hojeD.getDate() - ((hojeD.getDay() + 6) % 7));
             const dom = new Date(seg); dom.setDate(seg.getDate() + 6);
-            html += `<div class="periodo">🗓️ <b>Semana ${isoWeek(hojeD).w}</b> · ${seg.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} a ${dom.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} · reinicia toda segunda. Rotinas de controle de estoque, compra e relacionamento.</div>`;
+            html += `<div class="periodo">🗓️ <b>Semana ${isoWeek(hojeD).w}</b> · ${seg.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} a ${dom.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} · soma pontos no Ranking Mensal!</div>`;
         } else {
-            html += `<div class="periodo">🏆 <b>${hojeD.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</b> · reinicia todo mês. Ordem sugerida: M4 antes do M7; D6 diários antes do M1.</div>`;
+            html += `<div class="periodo">🏆 <b>${hojeD.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</b> · Ordem sugerida: M4 antes do M7; D6 diários antes do M1.</div>`;
+        }
+        if (rotinaModo === 'card') {
+            el.innerHTML = html + renderIterativoStage(lista);
+            bindSwipeIterativo();
+            return;
         }
         html += `<div class="quests">` + lista.map(t => cardHTML(t, {
             done: !!state.done[t.id], reg: state.log[t.id], unlocked: true, isNext: false,
@@ -2053,9 +3519,14 @@ function renderQuests(el) {
         return;
     }
 
-    // ---------- diária: hoje ou histórico (somente leitura) ----------
-    const vd = viewDate || today();
-    const hoje = vd === today();
+    // ---------- diária: modo iterativo limpo (padrão) ----------
+    if (hoje && rotinaModo === 'card') {
+        el.innerHTML = html + renderIterativoStage(allTasks());
+        bindSwipeIterativo();
+        return;
+    }
+
+    // ---------- diária: mapa completo ou consulta de data passada ----------
     html += dateNavQ(vd);
     let sections, doneMap, logMap, readonly = !hoje;
     if (hoje) {
@@ -2069,11 +3540,11 @@ function renderQuests(el) {
 
     const snap = hoje ? snapshotToday() : state.history[vd];
     const pct = snap.total ? Math.round((snap.feitas / snap.total) * 100) : 0;
-    const bonusAtivo = snap.bonus > 0;
+    const ptsTot = (snap.pts || 0) + (snap.noPrazoPts || 0) + (snap.turboPts || 0) + (snap.bonus || 0);
     const status = hoje
-        ? (bonusAtivo ? '🏆 Parabéns! Todas as fases de hoje foram desbloqueadas e concluídas!' : '🔓 Progressão por desbloqueio: conclua o passo atual para liberar o próximo!')
+        ? (snap.bonus > 0 ? '🏆 Todas as fases obrigatórias de hoje foram concluídas!' : '🗺️ Mapa Completo da Fase · Clique em qualquer POP liberado para focar no Passo a Passo.')
         : `📜 Consultando o histórico de ${fmtData(vd)} (somente leitura)`;
-    html += `<div class="jornada"><div class="jornada-top"><span>${status}</span><span class="sync">💾 Salvo neste aparelho • <b>${pct}% concluído (${snap.pts + snap.bonus} pts)</b></span></div>${hoje ? trilhaFases(sections) : ''}</div>`;
+    html += `<div class="jornada"><div class="jornada-top"><span>${status}</span><span class="sync">💾 <b>${pct}% concluído (${ptsTot} pts)</b></span></div>${hoje ? trilhaFases(sections) : ''}</div>`;
 
     const nextId = hoje ? nextTaskId() : null;
     sections.forEach(sec => {
@@ -2098,7 +3569,6 @@ function renderQuests(el) {
     el.innerHTML = html;
 }
 
-
 function renderAchievements(el) {
     el.innerHTML = '<div class="section-title">🏆 Conquistas</div>' +
         ACHIEVEMENTS.map(a => {
@@ -2114,47 +3584,43 @@ function renderRanks(el) {
     const ranks = RANKS[selectedRole] || [];
     const rs = getRoleState();
     const role = ROLES.find(r => r.id === selectedRole);
-    let html = `<div class="section-title">🌿 Graduações — ${role.name}</div>`;
-    ranks.forEach((r, i) => {
+    let html = `<div class="section-title">🌿 Graduações de Carreira — ${role.name}</div>`;
+    ranks.forEach((r) => {
         const unlocked = rs.pops >= r.pops;
         html += `<div class="ach-card ${unlocked?'unlocked':''}">
             <div class="ach-icon">${r.icon}</div>
             <div>
                 <div class="ach-name">${unlocked?r.name:'???'}</div>
-                <div class="ach-desc">${r.pops} POPs necessários</div>
+                <div class="ach-desc">${r.pops} POPs acumulados na carreira</div>
             </div>
         </div>`;
     });
-    if (selectedRole === 'freelancer') {
-        html += `<div style="text-align:center;padding:16px;color:var(--gold);font-weight:700">🎯 90 POPs = Promoção para Aspirante!</div>`;
-    }
     el.innerHTML = html;
 }
 
-function showTab(t) { activeTab = t; updateGameUI(); }
+function showTab(t) { activeTab = t; impDrawerOpen = false; updateGameUI(); }
 
 // ========== STEP CHECKLIST ==========
 function getStepsChecked(questId, totalSteps) {
     if (!state.stepsDone) state.stepsDone = {};
     if (!state.stepsDone[questId]) state.stepsDone[questId] = new Array(totalSteps).fill(false);
-    // Ensure array length matches
     while (state.stepsDone[questId].length < totalSteps) state.stepsDone[questId].push(false);
     return state.stepsDone[questId];
 }
 
 function toggleStep(questId, stepIndex, totalSteps) {
-    if (state.done[questId]) return; // Already completed, don't toggle
+    if (state.done[questId]) return;
     if (!isUnlocked(questId)) { showToast('🔒 Conclua o passo anterior primeiro!'); return; }
     const steps = getStepsChecked(questId, totalSteps);
     steps[stepIndex] = !steps[stepIndex];
+    if (steps[stepIndex]) {
+        if (state.repescagem && state.repescagem[questId]) state.repescagem[questId] = state.repescagem[questId].filter(i => i !== stepIndex);
+        if (Array.isArray(state.adiadosFim)) state.adiadosFim = state.adiadosFim.filter(x => !(x.taskId === questId && x.stepIdx === stepIndex));
+        impedimentosDia(today()).forEach(imp => { if (imp.taskId === questId && imp.stepIdx === stepIndex) { imp.resolvido = true; imp.horaResolvido = relogioHHMM(); } });
+    }
     save();
-    
-    // Auto-complete quest if all steps checked
-    const allChecked = steps.every(Boolean);
-    if (allChecked) {
-        setTimeout(() => {
-            toggleQ(questId);
-        }, 300);
+    if (steps.every(Boolean)) {
+        setTimeout(() => toggleQ(questId), 220);
     } else {
         updateGameUI();
     }
@@ -2163,12 +3629,11 @@ function toggleStep(questId, stepIndex, totalSteps) {
 // ========== QUEST ACTIONS ==========
 function handleQ(id, event) {
     const target = event.target;
-    if (target.closest('.q-step')) return; // Handled by toggleStep
+    if (target.closest('.q-step')) return;
     if (!isUnlocked(id)) { showToast('🔒 Conclua o passo anterior primeiro!'); return; }
     if (target.closest('.q-check') || target.closest('.q-xp')) {
-        // Manual toggle: if unchecking, allow. If checking, only if all steps done
         if (state.done[id]) {
-            toggleQ(id); // Uncomplete
+            toggleQ(id);
         } else {
             const task = taskById(id);
             if (!task) return;
@@ -2176,9 +3641,8 @@ function handleQ(id, event) {
             if (steps.every(Boolean)) {
                 toggleQ(id);
             } else {
-                // Expand to show the checklist
                 expandedQ = id;
-                showToast('☑️ Complete todos os itens primeiro!');
+                showToast('☑️ Valide os passos primeiro!');
                 updateGameUI();
             }
         }
@@ -2199,7 +3663,6 @@ function toggleQ(id) {
         delete state.done[id];
         delete state.log[id];
         state.todayAll = false;
-        // Also reset steps
         if (state.stepsDone && state.stepsDone[id]) {
             state.stepsDone[id] = new Array(task.steps.length).fill(false);
         }
@@ -2207,48 +3670,46 @@ function toggleQ(id) {
         state.totalDone = Math.max(0, state.totalDone - 1);
     } else {
         state.done[id] = true;
-        showToast(frasePiloto('tarefa', '✅ Tarefa concluída!'));
-        expandedQ = null; // próxima tarefa abre sozinha
-        const agora = new Date();
-        const hora = `${String(agora.getHours()).padStart(2, '0')}:${String(agora.getMinutes()).padStart(2, '0')}`;
+        showToast(frasePiloto('tarefa', '✅ POP concluído no padrão!'));
+        expandedQ = null;
+        const hora = relogioHHMM();
         const prazo = prazoFor(id);
+        const u = loadUsers()[currentUser];
         state.log[id] = {
             hora, prazo,
-            quem: (currentShifts().find(s => s.id === selectedShift) || {}).name || '—',   // turno (Abertura / Fechamento / Fim de Semana)
+            quem: (currentShifts().find(s => s.id === selectedShift) || {}).name || '—',
+            autor: u ? u.nome : 'Equipe',
             cargo: (ROLES.find(r => r.id === selectedRole) || {}).name || '—',
             xp: task.xp, nome: task.name, fase: task.fase || null, dia: today(), cod: task.cod,
             noPrazo: prazo == null || toMin(hora) <= toMin(prazo) + TOLERANCIA_MIN
         };
-        // Mark all steps as done
         if (!state.stepsDone) state.stepsDone = {};
         state.stepsDone[id] = new Array(task.steps.length).fill(true);
+        if (state.repescagem) delete state.repescagem[id];
+        if (Array.isArray(state.adiadosFim)) state.adiadosFim = state.adiadosFim.filter(x => x.taskId !== id);
+
         rs.pops++;
         state.totalDone++;
         if (task.cod === 'D9') state.d8Count = (state.d8Count || 0) + 1;
 
-        // Check all done -> streak
-        const all = allTasks();
-        state.todayAll = all.every(t => state.done[t.id]);
+        const obTasks = allTasks().filter(t => !t.bonus);
+        state.todayAll = obTasks.length > 0 && obTasks.every(t => state.done[t.id]);
         if (!id.includes('@') && state.todayAll && state.lastDate !== today()) {
             state.streak++;
             state.lastDate = today();
             showToast(`🔥 Streak de ${state.streak} dia${state.streak>1?'s':''}!`);
         }
 
-        // Rank up?
         const newRank = getCurrentRank();
         if (newRank.index > oldRankIdx) {
             setTimeout(() => {
                 document.getElementById('rankup-title').textContent = `${newRank.icon} ${newRank.name}!`;
-                document.getElementById('rankup-sub').textContent = selectedRole === 'freelancer' && newRank.index >= RANKS.freelancer.length - 1
-                    ? '🎉 Parabéns! Pronto para ser Aspirante!'
-                    : frasePiloto('rankup', 'Nova graduação desbloqueada!');
+                document.getElementById('rankup-sub').textContent = frasePiloto('rankup', 'Nova graduação desbloqueada!');
                 document.getElementById('rankup').classList.add('show');
             }, 400);
         }
 
-        // Check achievements
-        const ctx = { ...state, todayAll: state.todayAll, rankIndex: getCurrentRank().index, isMaxRank: !getNextRank() || (selectedRole !== 'gerente' && getCurrentRank().index >= RANKS[selectedRole].length - 1) };
+        const ctx = { ...state, todayAll: state.todayAll, rankIndex: getCurrentRank().index, isMaxRank: !getNextRank() };
         ACHIEVEMENTS.forEach(a => {
             if (!state.achievements[a.id] && a.check(ctx)) {
                 state.achievements[a.id] = true;
@@ -2262,9 +3723,18 @@ function toggleQ(id) {
 }
 
 function resetDay() {
-    if (!confirm('Resetar tarefas do dia?')) return;
+    if (!confirm('Resetar tarefas e impedimentos do dia atual?')) return;
     const all = allTasks();
-    all.forEach(t => { delete state.done[t.id]; delete state.log[t.id]; });
+    all.forEach(t => {
+        delete state.done[t.id];
+        delete state.log[t.id];
+        if (state.stepsDone) delete state.stepsDone[t.id];
+        if (state.repescagem) delete state.repescagem[t.id];
+    });
+    state.adiadosFim = [];
+    if (state.impedimentos) delete state.impedimentos[today()];
+    celebPop = null;
+    focusedTaskId = null;
     state.todayAll = false;
     save();
     updateGameUI();
@@ -2301,7 +3771,7 @@ function pontosSemana() {
     for (let i = 0; i < 7; i++) {
         const iso = localISO(new Date(h.getFullYear(), h.getMonth(), h.getDate() - i));
         const r = iso === today() ? snapshotToday() : state.history[iso];
-        if (r) tot += (r.pts || 0) + (r.bonus || 0);
+        if (r) tot += (r.pts || 0) + (r.noPrazoPts || 0) + (r.turboPts || 0) + (r.bonus || 0);
     }
     return tot;
 }
@@ -2327,6 +3797,134 @@ function shiftViewDate(delta) {
     renderContent();
 }
 
+// ========== ABA RANKING MENSAL & PREMIAÇÃO DA CORRIDA MALUCA ==========
+function fmtMesLabel(ym) {
+    const [y, m] = String(ym || today().slice(0, 7)).split('-').map(Number);
+    const nomes = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+    return `${nomes[(m || 1) - 1]} de ${y}`;
+}
+function shiftCopaMes(delta) {
+    const cur = copaMes || today().slice(0, 7);
+    const [y, m] = cur.split('-').map(Number);
+    const dt = new Date(y, m - 1 + delta, 1);
+    const nextYm = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
+    const maxYm = today().slice(0, 7);
+    copaMes = nextYm >= maxYm ? null : nextYm;
+    updateGameUI();
+}
+function setCopaMesAtual() {
+    copaMes = null;
+    updateGameUI();
+}
+function toggleDemoRivais() {
+    demoRivais = !demoRivais;
+    updateGameUI();
+}
+
+function renderCopa(el) {
+    const mes = copaMes || today().slice(0, 7);
+    const ehMesAtual = mes === today().slice(0, 7);
+    const usersCount = Object.keys(loadUsers()).length;
+    const ranking = calcularRankingMensal(mes, demoRivais);
+    const premios = Object.assign({}, PREMIOS_PADRAO, (state.config && state.config.premiosCorrida) || {});
+
+    let html = `<div class="datenav" style="justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;align-items:center;gap:6px">
+            <button onclick="shiftCopaMes(-1)" title="Mês anterior">◀</button>
+            <span style="font-weight:900;font-size:0.88rem;padding:0 8px">🏆 Copa Corrida Maluca — ${fmtMesLabel(mes)}</span>
+            <button onclick="shiftCopaMes(1)" ${ehMesAtual ? 'disabled style="opacity:0.4;cursor:default"' : ''} title="Próximo mês">▶</button>
+            ${!ehMesAtual ? `<button onclick="setCopaMesAtual()">Mês Atual</button>` : ''}
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            ${usersCount < 2 ? `<button class="btn ${demoRivais ? 'primary' : ''}" style="padding:6px 10px;font-size:0.72rem" onclick="toggleDemoRivais()">${demoRivais ? '✓ Simulação de Equipe Ativa' : '👥 Simular Equipe na Pista'}</button>` : ''}
+            <button class="btn" style="padding:6px 10px;font-size:0.72rem" onclick="logout()">➕ Trocar / Cadastrar Colaborador</button>
+        </div>
+    </div>`;
+
+    if (!ehMesAtual) {
+        html += `<div class="hist-note">📜 Classificação consolidada de <b>${fmtMesLabel(mes)}</b> — consulte os vencedores para premiação.</div>`;
+    } else if (usersCount < 2 && !demoRivais) {
+        html += `<div class="panel" style="border-color:var(--gold2);padding:12px 14px;margin-bottom:12px">
+            <div style="font-size:0.78rem;line-height:1.5">👥 <b>Corrida Multiusuário ativa neste aparelho!</b> Cada colaborador que entra com seu login participa automaticamente da pista e soma pontos no Ranking Mensal. Há <b>${usersCount}</b> perfil cadastrado no momento — toque em <b>"👥 Simular Equipe na Pista"</b> acima para visualizar a disputa com vários carros ou cadastre os demais colegas no login.</div>
+        </div>`;
+    }
+
+    // Pódio Top 3
+    const podOrder = [0, 1, 2];
+    const medalhas = ['🥇 1º LUGAR', '🥈 2º LUGAR', '🥉 3º LUGAR'];
+    const premiosArr = [premios.p1, premios.p2, premios.p3];
+    html += `<div class="podium-grid">` + podOrder.map(idx => {
+        const r = ranking[idx];
+        const cls = `pod-${idx + 1}`;
+        if (!r) {
+            return `<div class="pod-card ${cls}" style="opacity:0.68">
+                <div class="pod-medal">${medalhas[idx].split(' ')[0]}</div>
+                <div style="font-size:0.72rem;font-weight:800;color:var(--text2)">${medalhas[idx]}</div>
+                <div style="margin:14px 0;font-size:0.8rem;font-weight:700;color:var(--text2)">Vaga aberta na pista!</div>
+                <div class="pod-prize">🎁 ${esc(premiosArr[idx])}</div>
+            </div>`;
+        }
+        return `<div class="pod-card ${cls}">
+            <div class="pod-medal">${medalhas[idx].split(' ')[0]}</div>
+            <div style="font-size:0.7rem;font-weight:900;letter-spacing:0.6px;color:var(--text2)">${medalhas[idx]}${r.isMe ? ' · <span style="color:var(--green)">VOCÊ</span>' : ''}${r.isDemo ? ' · DEMO' : ''}</div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0 4px">
+                <div style="height:40px;display:flex;align-items:center">${artHTML(r.char, 'car', 'rr-img')}</div>
+            </div>
+            <div style="font-size:1.02rem;font-weight:900;color:var(--text)">${esc(r.nome)}</div>
+            <div style="font-size:0.7rem;color:var(--text2);font-weight:700;margin-top:2px">#${r.char.num} ${esc(r.char.curto)} · ${r.grad.icon} ${esc(r.grad.name)}</div>
+            <div class="pod-pts">${r.pontosMes} <span style="font-size:0.76rem;font-weight:800">pts</span></div>
+            <div style="display:flex;justify-content:center;gap:5px;flex-wrap:wrap;margin-top:6px;font-size:0.66rem;font-weight:800">
+                <span style="padding:3px 7px;border-radius:999px;background:var(--bg3)">🚀 ${r.turbos15}x Turbo -15m</span>
+                <span style="padding:3px 7px;border-radius:999px;background:var(--bg3)">🏁 ${r.turnos100}x 100%</span>
+                <span style="padding:3px 7px;border-radius:999px;background:var(--bg3)">⏱️ ${r.taxaPrazo}% prazo</span>
+            </div>
+            <div class="pod-prize">🎁 <b>Prêmio:</b> ${esc(premiosArr[idx])}</div>
+        </div>`;
+    }).join('') + `</div>`;
+
+    // Tabela completa de classificação
+    html += `<div class="panel"><h3>📊 Classificação Geral dos Pilotos — ${fmtMesLabel(mes)}</h3>
+        <div style="overflow-x:auto"><table class="tb">
+            <tr><th>Pos.</th><th>Colaborador & Carro</th><th>POPs + Prazo</th><th>🚀 Turbos (-15m)</th><th>🏁 Turnos 100%</th><th>Hoje na Pista</th><th>Total no Mês</th></tr>
+            ${ranking.map((r, i) => `<tr style="${r.isMe ? 'background:color-mix(in srgb, var(--green) 10%, transparent)' : ''}">
+                <td><b>${i === 0 ? '🥇 1º' : (i === 1 ? '🥈 2º' : (i === 2 ? '🥉 3º' : (i + 1) + 'º'))}</b></td>
+                <td><b>${esc(r.nome)}</b>${r.isMe ? ' <span class="ontime">(Você)</span>' : ''}<br><span style="font-size:0.68rem;color:var(--text2)">#${r.char.num} ${esc(r.char.carro)} · ${r.popsFeitos} POPs no mês</span></td>
+                <td>+${r.ptsPop + r.ptsPrazo} pts <span style="font-size:0.68rem;color:var(--text2)">(${r.taxaPrazo}% prazo)</span></td>
+                <td><b>${r.turbos15}x</b> <span class="ontime">(+${r.ptsTurbo} pts)</span></td>
+                <td><b>${r.turnos100}x</b> <span style="color:var(--gold)">(+${r.ptsBonus} pts)</span></td>
+                <td>${r.ativoHoje ? `<b>${Math.round(r.pctHoje)}%</b>${r.turboHoje ? ' 🚀' : ''}` : '<span style="color:var(--text2)">—</span>'}</td>
+                <td style="font-size:0.95rem;font-weight:900;color:var(--green)">${r.pontosMes} pts</td>
+            </tr>`).join('')}
+        </table></div>
+    </div>`;
+
+    // Painel explicativo das regras do campeonato (Gestor + Colaborador)
+    html += `<div class="panel"><h3>⚡ Como Pontuar e Vencer a Corrida Maluca</h3>
+        <div class="grid2" style="margin-top:8px">
+            <div class="guide-box exec">
+                <h5>🚀 1. Turbo Pontualidade (-15 min)</h5>
+                Chegar e iniciar o turno <b>15 minutos antes do horário</b> (ex.: até <code>10:45</code> para abertura das <code>11:00</code>) dispara o <b>Turbo de Largada (+${TURBO_15_PTS} pts)</b> e avança seu carro na pista logo na saída!
+            </div>
+            <div class="guide-box mgr">
+                <h5>🔄 2. Impedimento (X) Volta no Final</h5>
+                Teve um bloqueio real? Marque <b>✕ Impedimento</b>: o carro <b>não avança</b> naquele instante, mas o passo vai para a <b>Repescagem no final</b> para você resolver depois e garantir <b>100% da corrida</b>!
+            </div>
+            <div class="guide-box exec">
+                <h5>⏱️ 3. Execução no Padrão + Prazo</h5>
+                Cada POP concluído soma seu XP integral (<b>10 a 30 pts</b>) + <b>+${BONUS_PRAZO_PTS} pts extras</b> quando finalizado dentro da janela de horário do gestor.
+            </div>
+            <div class="guide-box mgr">
+                <h5>🏁 4. Bandeirada Turno 100% (+${BONUS_DIA} pts)</h5>
+                Zerar todos os POPs obrigatórios do turno (incluindo itens que voltaram na repescagem) libera o bônus diário de <b>+${BONUS_DIA} pts</b> no campeonato!
+            </div>
+        </div>
+        <div style="margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--bg3);font-size:0.74rem;color:var(--text2);line-height:1.45">
+            📋 <b>Regulamento do Gestor:</b> ${esc(premios.regras)} <em>(Os prêmios e critérios podem ser ajustados na aba 🔒 Gestor).</em>
+        </div>
+    </div>`;
+
+    el.innerHTML = html;
+}
 
 function renderTeam(el) {
     const { rec, vd, isToday } = getViewRec();
@@ -2351,12 +3949,13 @@ function renderTeam(el) {
     const ehParque = rec.unit === 'parque';
     const rondas = ['RONDA_1', 'RONDA_2', 'RONDA_3', 'RONDA_4', 'RONDA_5'].filter(i => rec.done[i]).length;
     const prats = ['PRAT_1', 'PRAT_2', 'FECH_A'].filter(i => rec.done[i]).length;
+    const ptsDiaTot = (rec.pts || 0) + (rec.noPrazoPts || 0) + (rec.turboPts || 0) + (rec.bonus || 0);
 
     html += `<div class="grid2">
         <div class="kpi"><div class="k-lbl">Progresso da rotina na data</div><div class="k-val">${pct}%</div>
             <div class="bar"><div style="width:${pct}%"></div></div><div class="k-sub">${feitas} de ${rec.total} tarefas obrigatórias concluídas</div></div>
-        <div class="kpi"><div class="k-lbl">Pontuação do dia</div><div class="k-val" style="color:var(--gold)">${rec.pts + rec.bonus} pts</div>
-            <div class="k-sub">${rec.bonus ? '🏆 BÔNUS DE +' + rec.bonus + ' PTS DESBLOQUEADO!' : 'Complete 100% das obrigatórias para ganhar +' + BONUS_DIA + ' pts!'}</div></div>
+        <div class="kpi"><div class="k-lbl">Pontuação do dia</div><div class="k-val" style="color:var(--gold)">${ptsDiaTot} pts</div>
+            <div class="k-sub">${rec.turboPts ? `🚀 Turbo -15min (+${rec.turboPts}) · ` : ''}${rec.bonus ? '🏆 Turno 100% (+' + rec.bonus + ' pts)!' : 'Complete 100% para ganhar +' + BONUS_DIA + ' pts!'}</div></div>
         <div class="kpi"><div class="k-lbl">Nível da unidade</div><div class="k-val" style="font-size:0.95rem;color:var(--green)">${nivelUnidade(semana)}</div>
             <div class="bar"><div style="width:${Math.min(100, Math.round(semana / 10))}%"></div></div><div class="k-sub">Pontos acumulados na semana: ${semana} pts</div></div>
         <div class="kpi"><div class="k-lbl">Sequência de dias 100%</div><div class="k-val" style="color:var(--red)">🔥 ${state.streak} dia${state.streak === 1 ? '' : 's'}</div>
@@ -2380,7 +3979,7 @@ function renderTeam(el) {
 
     const linhas = Object.entries(rec.log).map(([id, l]) => Object.assign({ id }, l)).filter(l => !l.dia || l.dia === vd).sort((a, b) => a.hora.localeCompare(b.hora));
     html += `<div class="panel"><h3>📜 Linha do tempo das tarefas na data selecionada</h3>` + (linhas.length ? `<div style="overflow-x:auto"><table class="tb"><tr><th>Horário</th><th>Fase</th><th>Tarefa concluída</th><th>Realizado por</th><th>Status do prazo</th><th>Pontos</th></tr>` +
-        linhas.map(l => `<tr><td>${l.hora}</td><td>${l.fase ? 'Fase ' + l.fase : '—'}</td><td>${l.nome}</td><td>${l.quem}</td><td class="${l.prazo ? (l.noPrazo ? 'ontime' : 'late') : ''}">${l.prazo ? (l.noPrazo ? 'No prazo' : 'Após o prazo') : '—'}</td><td>+${l.xp} pts</td></tr>`).join('') + `</table></div>` : 'Nenhuma tarefa marcada nesta data.') + `</div>`;
+        linhas.map(l => `<tr><td>${l.hora}</td><td>${l.fase ? 'Fase ' + l.fase : '—'}</td><td>${l.nome}</td><td>${l.quem}</td><td class="${l.prazo ? (l.noPrazo ? 'ontime' : 'late') : ''}">${l.prazo ? (l.noPrazo ? 'No prazo (+5)' : 'Após o prazo') : '—'}</td><td>+${l.xp + (l.prazo && l.noPrazo ? BONUS_PRAZO_PTS : 0)} pts</td></tr>`).join('') + `</table></div>` : 'Nenhuma tarefa marcada nesta data.') + `</div>`;
     el.innerHTML = html;
 }
 
@@ -2417,14 +4016,108 @@ function saveMeta() {
 }
 function toggleSequencial(on) { state.config.sequencial = on; save(); showToast(on ? '🔒 Ordem obrigatória ativada.' : '🔓 Ordem obrigatória desativada.'); updateGameUI(); }
 
+function salvarPremiosCorrida() {
+    const p1 = (document.getElementById('inp-premio-1').value || '').trim() || PREMIOS_PADRAO.p1;
+    const p2 = (document.getElementById('inp-premio-2').value || '').trim() || PREMIOS_PADRAO.p2;
+    const p3 = (document.getElementById('inp-premio-3').value || '').trim() || PREMIOS_PADRAO.p3;
+    const regras = (document.getElementById('inp-premio-regras').value || '').trim() || PREMIOS_PADRAO.regras;
+    state.config.premiosCorrida = { p1, p2, p3, regras };
+    save();
+    showToast('🏆 Prêmios da Corrida Maluca salvos!');
+    updateGameUI();
+}
+
+function alternarTurboColaborador(uKey) {
+    const hoje = today();
+    const users = loadUsers();
+    if (!users[uKey]) return;
+    const isMe = uKey === currentUser;
+    const alvo = isMe ? state : normalizeState(Object.assign(defaultState(), users[uKey].data || {}));
+    alvo.checkins = alvo.checkins || {};
+    const cur = alvo.checkins[hoje];
+    if (cur && cur.turbo) {
+        alvo.checkins[hoje] = Object.assign({}, cur, { turbo: false, pts: 0, tipo: 'revogado_gestor' });
+        if (!isMe && alvo.history && alvo.history[hoje]) alvo.history[hoje].turboPts = 0;
+        showToast(`⏰ Turbo de hoje removido para ${users[uKey].nome}.`);
+    } else {
+        const hInfo = horarioTurnoInfo(alvo.unit || selectedUnit, selectedShift);
+        alvo.checkins[hoje] = { hora: cur ? cur.hora : hInfo.metaTurbo, turbo: true, pts: TURBO_15_PTS, tipo: 'validado_gestor', metaTurbo: hInfo.metaTurbo, inicioLoja: hInfo.inicioLoja };
+        if (!isMe && alvo.history && alvo.history[hoje]) alvo.history[hoje].turboPts = TURBO_15_PTS;
+        showToast(`🚀 Turbo (-15 min) validado para ${users[uKey].nome} (+${TURBO_15_PTS} pts)!`, true);
+    }
+    if (isMe) {
+        save();
+    } else {
+        const dSave = Object.assign({}, alvo);
+        delete dSave.config;
+        users[uKey].data = dSave;
+        localStorage.setItem('pd-users', JSON.stringify(users));
+    }
+    updateGameUI();
+}
+
+function encerrarImpedimentoGestor(uKey, impIdx) {
+    const hoje = today();
+    const users = loadUsers();
+    if (!users[uKey]) return;
+    const isMe = uKey === currentUser;
+    const alvo = isMe ? state : normalizeState(Object.assign(defaultState(), users[uKey].data || {}));
+    const lista = (alvo.impedimentos && alvo.impedimentos[hoje]) || [];
+    const imp = lista[impIdx];
+    if (!imp) return;
+    imp.encerradoGestor = true;
+    imp.resolvido = true;
+    imp.horaResolvido = relogioHHMM() + ' (Gestor)';
+    // Marca o passo abonado como verificado pelo gestor para não impedir o fechamento de 100% quando for bloqueio externo
+    if (isMe) {
+        const t = taskById(imp.taskId);
+        if (t) {
+            const st = getStepsChecked(t.id, t.steps.length);
+            st[imp.stepIdx] = true;
+            if (state.repescagem && state.repescagem[t.id]) state.repescagem[t.id] = state.repescagem[t.id].filter(i => i !== imp.stepIdx);
+            state.adiadosFim = (state.adiadosFim || []).filter(x => !(x.taskId === t.id && x.stepIdx === imp.stepIdx));
+            if (st.every(Boolean) && !state.done[t.id]) toggleQ(t.id);
+        }
+        save();
+    } else {
+        const dSave = Object.assign({}, alvo);
+        delete dSave.config;
+        users[uKey].data = dSave;
+        localStorage.setItem('pd-users', JSON.stringify(users));
+    }
+    showToast('🛡️ Impedimento tratado e abonado pelo Gestor.');
+    updateGameUI();
+}
+
+function coletarImpedimentosTodosUsuarios(iso) {
+    const d = iso || today();
+    const users = loadUsers();
+    const todos = [];
+    Object.entries(users).forEach(([uKey, uObj]) => {
+        const st = uKey === currentUser ? state : normalizeState(Object.assign(defaultState(), uObj.data || {}));
+        const arr = (st.impedimentos && st.impedimentos[d]) || [];
+        arr.forEach((imp, idx) => {
+            todos.push(Object.assign({ uKey, colaborador: uObj.nome || uKey, impIdx: idx }, imp));
+        });
+    });
+    return todos.sort((a, b) => String(b.hora || '').localeCompare(String(a.hora || '')));
+}
+
 function copySummary() {
     const obrig = dayTasks().filter(t => !t.bonus);
     const pend = obrig.filter(t => !state.done[t.id]);
     const feitas = obrig.length - pend.length;
     const pct = obrig.length ? Math.round((feitas / obrig.length) * 100) : 0;
-    let txt = `*📋 RESUMO DA ROTINA — ${unitInfo().label} (${fmtData(today())})*\n• Progresso do POP: *${pct}%* (${feitas}/${obrig.length} obrigatórias)\n• Vendas do dia: *${fmtBRL(vendaHoje())}*\n`;
+    const impsAbertos = coletarImpedimentosTodosUsuarios(today()).filter(x => !x.resolvido);
+    const rk = calcularRankingMensal(today().slice(0, 7), false);
+    const lider = rk[0] ? `${rk[0].nome} (${rk[0].pontosMes} pts)` : '—';
+    let txt = `*📋 RESUMO DA ROTINA — ${unitInfo().label} (${fmtData(today())})*\n• Progresso do POP: *${pct}%* (${feitas}/${obrig.length} obrigatórias)\n• Vendas do dia: *${fmtBRL(vendaHoje())}*\n• 🏆 Líder da Corrida Mensal: *${lider}*\n`;
+    if (turboHojeAtivo()) txt += `• 🚀 Turbo Pontualidade (-15 min): *Ativo*\n`;
+    if (impsAbertos.length) {
+        txt += `\n*🚧 Impedimentos na Repescagem (${impsAbertos.length}):*\n` + impsAbertos.map(i => `- [${i.cod}] ${i.stepText || i.stepTxt || ''} — _${i.motivo}_ (${i.colaborador})`).join('\n') + '\n';
+    }
     if (pend.length === 0) {
-        txt += `✅ *Parabéns time! 100% da rotina concluída!*`;
+        txt += `\n✅ *Parabéns time! 100% da rotina concluída!*`;
     } else {
         txt += `\n*⚠️ Etapas pendentes:*\n` + pend.map(t => { const p = prazoFor(t.id); return `- ${t.name}${p ? ' (Prazo ' + p + ')' : ''}`; }).join('\n');
     }
@@ -2449,7 +4142,7 @@ function renderManager(el) {
     if (!gestorOpen) {
         const has = !!state.config.pin;
         el.innerHTML = `<div class="panel" style="text-align:center"><div style="font-size:2rem">🔐</div><h3>Módulo exclusivo do Gestor</h3>
-            <p style="font-size:0.78rem;color:var(--text2);margin-bottom:12px;line-height:1.5">Acesso restrito para acompanhamento de valores financeiros em Reais (R$) e desempenho individual por turno.<br>${has ? '' : '<b>Primeiro acesso:</b> crie uma senha (mín. 4 caracteres).'}</p>
+            <p style="font-size:0.78rem;color:var(--text2);margin-bottom:12px;line-height:1.5">Acesso restrito para acompanhamento financeiro (R$), auditoria de Turbo (-15 min), impedimentos operacionais e premiação mensal.<br>${has ? '' : '<b>Primeiro acesso:</b> crie uma senha (mín. 4 caracteres).'}</p>
             <input class="field" id="inp-pin" type="password" placeholder="${has ? 'Senha do Gestor' : 'Nova senha'}" style="text-align:center" onkeydown="if(event.key==='Enter')unlockMgr()">
             <button class="btn primary" style="width:100%" onclick="unlockMgr()">${has ? 'Entrar' : 'Criar senha e entrar'}</button></div>`;
         return;
@@ -2459,6 +4152,7 @@ function renderManager(el) {
     const pct = metaGest > 0 ? Math.round((vendaHoje() / metaGest) * 100) : null;
     const obrig = dayTasks().filter(t => !t.bonus);
     const pend = obrig.filter(t => !state.done[t.id]);
+    const premios = Object.assign({}, PREMIOS_PADRAO, (state.config && state.config.premiosCorrida) || {});
 
     const porTurno = {};
     Object.entries(state.log).forEach(([id, l]) => {
@@ -2473,6 +4167,37 @@ function renderManager(el) {
         return `<tr><td><b>${s.icon} ${s.name}</b></td><td>${s.time}</td><td>${c.n} tarefas</td><td>${c.pts} pts</td><td>${c.prat} concluída(s)</td><td>${c.rond} ronda(s)</td><td class="${c.atr ? 'late' : 'ontime'}">${c.atr === 0 ? '0 atrasos ✓' : c.atr + ' após o prazo'}</td></tr>`;
     }).join('');
 
+    // Auditoria de Pontualidade / Turbo -15min por colaborador hoje
+    const users = loadUsers();
+    const hoje = today();
+    const linhasTurbo = Object.entries(users).map(([uKey, uObj]) => {
+        const uSt = uKey === currentUser ? state : normalizeState(Object.assign(defaultState(), uObj.data || {}));
+        const ck = (uSt.checkins && uSt.checkins[hoje]) || null;
+        const on = !!(ck && ck.turbo);
+        return `<tr>
+            <td><b>${esc(uObj.nome || uKey)}</b></td>
+            <td>${ck ? esc(ck.hora) : 'Sem check-in hoje'}</td>
+            <td class="${on ? 'ontime' : ''}">${on ? `🚀 Ativo (+${ck.pts} pts · ${esc(ck.tipo || 'relogio')})` : '—'}</td>
+            <td><button class="btn" style="padding:5px 9px;font-size:0.7rem" onclick="alternarTurboColaborador('${esc(uKey)}')">${on ? 'Revogar Turbo' : '🚀 Validar -15min'}</button></td>
+        </tr>`;
+    }).join('');
+
+    // Central de Impedimentos Operacionais do Dia
+    const todosImps = coletarImpedimentosTodosUsuarios(hoje);
+    const painelImps = `<div class="panel"><h3>🚧 Central de Impedimentos Operacionais (Hoje)</h3>` + (todosImps.length
+        ? `<div style="overflow-x:auto"><table class="tb">
+            <tr><th>Hora</th><th>Colaborador</th><th>POP / Passo</th><th>Motivo & Observação</th><th>Situação na Corrida</th><th>Ação Gestor</th></tr>
+            ${todosImps.map(imp => `<tr>
+                <td>${esc(imp.hora || '—')}</td>
+                <td><b>${esc(imp.colaborador)}</b></td>
+                <td><b>${esc(imp.cod || imp.taskId)}</b> — ${esc(imp.stepText || imp.stepTxt || '')}</td>
+                <td><b>${esc(imp.motivo || '')}</b>${imp.obs ? `<br><span style="font-size:0.68rem;color:var(--text2)">${esc(imp.obs)}</span>` : ''}</td>
+                <td class="${imp.resolvido ? 'ontime' : 'late'}">${imp.encerradoGestor ? '🛡️ Abonado pelo Gestor' : (imp.resolvido ? `✅ Concluído na Repescagem (${esc(imp.horaResolvido || '')})` : '🔄 Na Repescagem (carro aguardando)')}</td>
+                <td>${imp.resolvido ? '—' : `<button class="btn" style="padding:5px 9px;font-size:0.7rem" onclick="encerrarImpedimentoGestor('${esc(imp.uKey)}', ${imp.impIdx})">🛡️ Abonar & Liberar</button>`}</td>
+            </tr>`).join('')}
+        </table></div>`
+        : `<span class="ontime"><b>✅ Nenhum impedimento operacional reportado hoje!</b></span>`) + `</div>`;
+
     el.innerHTML = `
     <div class="panel"><h3>🔒 Painel gerencial e financeiro — ${unitInfo().name}</h3>
         <div class="row"><input class="field" id="inp-meta" type="number" step="0.01" min="0" placeholder="Meta mensal (R$)" value="${state.config.metaMensal || ''}"><button class="btn primary" onclick="saveMeta()">Salvar meta</button></div>
@@ -2484,6 +4209,21 @@ function renderManager(el) {
         <div class="kpi"><div class="k-lbl">Meta diária da data</div><div class="k-val" style="color:var(--gold)">${fmtBRL(metaGest)}</div><div class="k-sub">Valor restante ÷ ${mi.restantes} dia(s)</div></div>
         <div class="kpi"><div class="k-lbl">Venda registrada na data</div><div class="k-val">${fmtBRL(vendaHoje())}</div><div class="k-sub">${pct === null ? 'Sem meta definida' : pct + '% da meta diária'}</div></div>
     </div>
+    <div class="panel"><h3>🏆 Premiação & Regras da Copa Mensal (Corrida Maluca)</h3>
+        <p style="font-size:0.74rem;color:var(--text2);margin-bottom:8px;line-height:1.45">Configure os prêmios mensais exibidos no pódio da aba <b>🏁 Ranking</b> para incentivar pontualidade (-15 min) e execução 100% no padrão:</p>
+        <input class="field" id="inp-premio-1" placeholder="Prêmio 1º Lugar" value="${esc(premios.p1)}">
+        <input class="field" id="inp-premio-2" placeholder="Prêmio 2º Lugar" value="${esc(premios.p2)}">
+        <input class="field" id="inp-premio-3" placeholder="Prêmio 3º Lugar" value="${esc(premios.p3)}">
+        <input class="field" id="inp-premio-regras" placeholder="Regras de elegibilidade" value="${esc(premios.regras)}">
+        <button class="btn primary" onclick="salvarPremiosCorrida()">💾 Salvar Prêmios do Mês</button>
+    </div>
+    <div class="panel"><h3>🚀 Auditoria de Pontualidade & Turbo (-15 min) — Hoje</h3>
+        <div style="overflow-x:auto"><table class="tb">
+            <tr><th>Colaborador</th><th>Horário de Entrada</th><th>Status Turbo (-15 min)</th><th>Ajuste Gerencial</th></tr>
+            ${linhasTurbo || '<tr><td colspan="4">Nenhum perfil cadastrado.</td></tr>'}
+        </table></div>
+    </div>
+    ${painelImps}
     <div class="panel"><h3>👥 Desempenho individual por turno na data selecionada</h3><div style="overflow-x:auto">
         <table class="tb"><tr><th>Turno</th><th>Horário</th><th>Tarefas concluídas</th><th>Pontos gerados</th><th>Prateleiras</th><th>Rondas</th><th>Fora do prazo</th></tr>${linhasTurno}</table></div></div>
     <div class="panel"><h3>⚠️ Tarefas pendentes na data selecionada</h3>${pend.length ?
